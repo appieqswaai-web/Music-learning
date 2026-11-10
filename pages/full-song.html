@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>完整歌曲示範・《夜風》節奏型解說</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#222;--mute:#777;--acc:#d9480f;--acc2:#1971c2;--line:#e2e0da}
+@media (prefers-color-scheme:dark){:root{--bg:#18181b;--card:#232327;--ink:#eee;--mute:#999;--line:#38383d}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header,main{max-width:920px;margin:auto;padding:0 16px}header{padding-top:20px}h1{font-size:1.4rem;margin:0 0 4px}header p{margin:4px 0;color:var(--mute);font-size:.92rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 16px}
+.bar .in{max-width:920px;margin:auto;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.92rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--card);color:var(--ink);padding:6px 10px;cursor:pointer;font:inherit}.seg button.on{background:var(--acc2);color:#fff}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}.btn.play{background:var(--acc);border-color:var(--acc);color:#fff;min-width:110px;font-weight:700}
+input[type=range]{width:120px;vertical-align:middle}label{cursor:pointer}
+#now{background:var(--card);border:2px solid var(--acc);border-radius:14px;padding:16px;margin:16px 0}
+#now .sec{font-size:1.5rem;font-weight:800}#now .mood{color:var(--mute);margin:2px 0 10px}
+#now .pat{display:inline-block;background:var(--acc2);color:#fff;border-radius:20px;padding:2px 12px;font-weight:700}
+#now .why{margin:8px 0}.lyr{font-size:1.6rem;letter-spacing:.1em;margin:10px 0 6px;min-height:2.4rem}.lyr span{padding:0 2px;border-radius:4px}.lyr span.sing{background:var(--acc);color:#fff}.lyr .sep{color:var(--mute);margin:0 .4em}
+.grid{display:grid;gap:2px;margin:4px 0}.cell{height:26px;border-radius:3px;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.cell.beat{box-shadow:inset 2px 0 0 color-mix(in srgb,var(--ink) 35%,transparent)}.cell.barstart{box-shadow:inset 3px 0 0 var(--acc2)}
+.cell.on{background:var(--acc)}.vgrid .cell.on{color:#fff;font-size:.72rem;display:flex;align-items:center;justify-content:center;font-weight:700}.cell.hold{background:color-mix(in srgb,var(--acc) 40%,transparent)}.cell.now{outline:2px solid var(--acc2);outline-offset:-2px}
+.drow .cell{height:10px}.drow .cell.on{background:var(--acc2)}.rowname{font-size:.72rem;color:var(--mute);margin-top:4px}
+.secbox{margin:14px 0}.secbox h3{margin:0 0 4px;font-size:1.05rem}.secbox .m{color:var(--mute);font-size:.86rem;margin:0 0 6px}
+.chip{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0;cursor:pointer}
+.chip:hover{border-color:var(--acc2)}.chip.cur{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 25%,transparent)}
+.chip .n{font-weight:700;color:var(--acc2);min-width:150px;font-size:.88rem}.chip .l{flex:1}.chip .bars{color:var(--mute);font-size:.78rem}
+.blind .pname{filter:blur(6px)}.blind .pname:hover{filter:none}
+.noexp #now .why,.noexp #now .mood{display:none}
+footer{max-width:920px;margin:auto;padding:10px 16px 40px;color:var(--mute);font-size:.85rem}
+</style></head><body>
+<header><h1>完整歌曲示範・《夜風》</h1>
+<p>把前面 13 種節奏型中的 10 種組成一首完整的歌：前奏 → 主歌 → 預副歌 → 副歌 → 橋段 → 最後副歌 → 尾奏。播放時上方面板會即時顯示「現在是哪一段、用了哪種節奏型、為什麼這樣用」。</p>
+<p>原創詞曲，人聲為母音合成（機器聲）。點下方任何一句可從那裡開始播。整理日期：2026-11-10 ・ 分類：音樂分析 / 節奏感訓練</p></header>
+<div class="bar"><div class="in">
+ <button class="btn play" id="play">▶ 播放整首</button>
+ <span class="seg" id="mix"><button data-m="both" class="on">人聲＋鼓</button><button data-m="voc">只人聲</button><button data-m="drum">只鼓</button></span>
+ <span>速度 <input type="range" id="bpm" min="60" max="130" value="92"> <b id="bpmv">92</b></span>
+ <label><input type="checkbox" id="click"> 節拍器</label>
+ <label><input type="checkbox" id="exp" checked> 播放時說明</label>
+ <label><input type="checkbox" id="blind"> 盲聽（模糊節奏型名稱，滑過才顯示）</label>
+</div></div>
+<main>
+<div id="now"><div class="sec">按 ▶ 開始</div><div class="mood">整首約 1 分半（92 BPM）。建議第一次先開「盲聽」，自己猜每一句是哪種節奏型，第二次再看說明。</div></div>
+<div id="tl"></div>
+</main>
+<footer><p>段落節奏設計的重點：<b>主歌</b>用平均、好聽懂的節奏講故事；<b>預副歌</b>用弱起、搶拍、三連音拖拍「蓄力」；<b>副歌</b>用切分勾子＋長音口號「釋放」，並且一直重複；<b>橋段</b>換律動製造對比；<b>尾奏</b>回到前奏首尾呼應。</p></footer>
+<script>
+const DRUMS={
+ pop8:{sub:4,k:"x.......x.x.....",s:"....x.......x...",h:"x.x.x.x.x.x.x.x."},
+ four:{sub:4,k:"x...x...x...x...",s:"....x.......x...",h:"..x...x...x...x."},
+ beat16:{sub:4,k:"x......x..x.....",s:"....x.......x...",h:"xxxxxxxxxxxxxxxx"},
+ half:{sub:4,k:"x.........x.....",s:"........x.......",h:"x.x.x.x.x.x.x.x."},
+ rnb:{sub:4,k:"x..x......x..x..",s:"....x.......x...",h:"x.xxx.x.x.xxx.x."},
+ shuffle:{sub:3,k:"x.....x.x...",s:"...x.....x..",h:"x.xx.xx.xx.x"},
+ pop8x6:{sub:6,k:"x...........x..x........",s:"......x...........x.....",h:"x..x..x..x..x..x..x..x.."},
+ ballad:{sub:4,k:"x.......x.......",s:"....x.......x...",h:"x...x...x...x..."}
+};
+const P=[
+ {t:"四分音符・正拍",tag:"暖身",dr:"ballad",v:"x---x---x---x---|x---x---x-------",ly:"慢慢走來/等你來",vw:"aaoa/eia",mel:[0,2,4,2,0,2,-1],
+  ex:"每個字都落在拍點上（1、2、3、4），最穩、最像兒歌或慢板抒情歌的副歌長句。先用它確認你的手能跟鼓對齊。",
+  how:"人聲和踢鼓／小鼓完全重疊，聽起來「很正」。"},
+ {t:"八分音符・平均流動",tag:"主歌常見",dr:"pop8",v:"x-x-x-x-x-x-x-x-|x-x-x-x-x-------",ly:"今天的風吹過街角/我想起了你",vw:"iaeeuoea/oaiei",mel:[0,0,2,2,4,4,2,2,0,0,2,4,0],
+  ex:"一拍兩個字、平均流動，是華語和 J-POP 主歌最基本的骨架（日文一假名一音也常是這樣）。",
+  how:"跟 Hi-hat 完全同步，每兩下 Hi-hat 一下鼓點。"},
+ {t:"弱起（Pickup）・提早進場",tag:"超常見",dr:"pop8",v:"..........x-x-x-|x---x-x-x-------",ly:"就讓我/飛向天空",vw:"uao/eaao",mel:[-3,-1,0,2,2,0,-1,0],
+  ex:"句子在前一小節尾巴（3&、4、4&）就先唱，讓重音字剛好落在下一小節第 1 拍。大部分流行歌的句子都不是從「1」開始。",
+  how:"人聲出現時鼓還在上一小節，第一個長音才跟踢鼓撞在一起。"},
+ {t:"反拍進場・從「&」開始",tag:"律動感",dr:"pop8",v:"..x-x-x-x-x-x---|..x-x-x-x-------",ly:"城市的燈亮起/沒人在等",vw:"eieeai/eeae",mel:[2,2,4,2,0,2,0,2,2,4,2,0],
+  ex:"每句跳過第 1 拍，從「1 的後半拍（1&）」才進來。空出來的第 1 拍讓鼓先講話，人聲聽起來比較鬆、比較帥。",
+  how:"踢鼓打完第 1 拍，人聲才緊接著進來。"},
+ {t:"3-3-2 切分（Tresillo）",tag:"切分代表",dr:"four",v:"x--x--x-x--x--x-|x--x--x-x-------",ly:"心跳在加速中/停不下來",vw:"iaaauo/iuaa",mel:[0,0,2,4,4,2,0,-1,0,2,4,2],
+  ex:"一小節 8 個八分格被切成 3＋3＋2。重音故意不落在 2、3 拍上，是 K-POP、拉丁、EDM 抒情歌副歌超愛用的「勾人」節奏。",
+  how:"四四拍踢鼓是平均的「咚咚咚咚」，人聲卻是「答—答—答答」，兩者互相錯開。"},
+ {t:"搶拍（Anticipation）・跨小節線",tag:"超常見",dr:"pop8",v:"x-x-x-x-x-x-x-x-|------..x-x-x---",ly:"一步一步走向明天/不回頭",vw:"iuiuoaia/uuo",mel:[0,2,4,4,2,0,2,5,4,2,0],
+  ex:"本來該在下一小節第 1 拍唱的重點字，提早半拍在「4&」就唱出來並延長過小節線。聽起來像「往前撲」，是流行歌最有衝勁的招式之一。",
+  how:"踢鼓落下第 1 拍時，人聲已經在拉長音了，沒有新的字。"},
+ {t:"十六分音符・快速咬字",tag:"饒舌 / 快歌",dr:"beat16",v:"xxxxxxxxx-x-x---|xxxxxxxxxxxx.x--",ly:"別問我為什麼一直往前衝/因為停下來就會被時間追上了",vw:"eeoeeeiiaao/ieiaaueeiauae",mel:[0,0,0,0,2,2,2,2,4,2,0,0,0,0,0,2,2,2,2,4,4,4,4,2],
+  ex:"一拍塞四個字，常見於 Rap 段落、J-POP 快歌主歌、或副歌前的「連珠炮」。重點是穩：每個字一樣長，不要越唱越快。",
+  how:"跟 16 分 Hi-hat 一下對一下，句尾才放慢成八分。"},
+ {t:"附點節奏・長短長短",tag:"跳躍感",dr:"pop8",v:"x--xx--xx--xx---|x--xx--xx-------",ly:"蹦蹦跳跳去旅行/陽光在微笑",vw:"eeaauui/aaaea",mel:[0,2,4,5,4,2,0,2,4,5,4,2],
+  ex:"「附點八分＋十六分」反覆：長—短、長—短。讓旋律有彈跳、走路一拐一拐的感覺，常見於輕快的 City Pop、迪士尼風歌曲。",
+  how:"長音在拍點上，短音緊貼下一拍前面。"},
+ {t:"十六分切分・R&B 律動",tag:"R&B / Neo-Soul",dr:"rnb",v:"x-.x-.x---x-.x--|.x-.x-x-x-------",ly:"你輕輕說愛/我慢半拍",vw:"iiioa/oaaa",mel:[0,2,4,2,0,2,4,4,2,0,2,-1],
+  ex:"重音落在「e」和「a」這種十六分位置，句子像在拍點之間滑來滑去。R&B、Neo-Soul、近年華語 R&B 主歌很常見，也最難靠聽一次就抓準。",
+  how:"很多字故意不跟任何鼓同時出現，夾在 Hi-hat 之間。"},
+ {t:"句中休止・促音式停頓",tag:"J-POP",dr:"pop8",v:"x-x-.-x-x-x-.-x-|x-x-.-x-x-------",ly:"等等你先別走/聽我說完",vw:"eeiaeo/iooa",mel:[0,2,2,4,2,0,2,4,4,2],
+  ex:"一串八分音符中間突然空一格（像日文的「っ」促音），形成短暫的煞車。休止本身就是節奏的一部分。",
+  how:"空掉的那一格剛好是小鼓或 Hi-hat 單獨出現的地方。"},
+ {t:"長音＋短句・副歌口號",tag:"副歌常見",dr:"half",v:"x-------x-x-x---|x---------------",ly:"我們一起/飛",vw:"oeii/e",mel:[4,2,4,5,4],
+  ex:"一個拉很長的音，接一個短短的三連字，再落一個長音。字少、好記、好合唱，常配半速鼓（Half-time）讓副歌聽起來「變大」。",
+  how:"鼓的小鼓在第 3 拍（半速），人聲長音底下鼓的空間很大。"},
+ {t:"三連音律動（Shuffle）",tag:"搖擺",dr:"shuffle",sub:3,v:"x-xx-xx-xx--|x-xx-xx-----",ly:"搖擺搖擺跟著我/一起搖一搖",vw:"aaaaeeo/iiaia",mel:[0,2,4,2,4,5,4,2,0,2,4,2,0],
+  ex:"一拍分三份，人聲走「長—短」的搖擺感（像 Blues、Doo-wop、部分 Bruno Mars 式復古流行）。跟附點節奏很像，但更圓、更鬆。",
+  how:"Hi-hat 也是「噠—嗒、噠—嗒」的三連音搖擺。"},
+ {t:"四分音符三連音・拖拍感",tag:"進階",dr:"pop8x6",sub:6,v:"x---x---x---x---x---x---|x-----x-----x-----------",ly:"我想慢慢地講/給你聽",vw:"oaaaia/eii",mel:[4,2,0,4,2,0,2,2,0],
+  ex:"第一小節唱的是「兩拍塞三個音」的四分音符三連音，跟底下直直的八分鼓明顯打架，聽起來像故意拖、像在講話。第二小節回到正常四分音符對照。抒情歌、Billie Eilish 式慵懶唱法常用。",
+  how:"人聲每個音都不跟第 2、4 拍小鼓對齊，第二小節才回到同步。"}
+];
+P.forEach(p=>{p.sub=p.sub||4;p.drum=DRUMS[p.dr]});
+
+/* ---------- 解析 ---------- */
+function parse(str){const s=str.replace(/\|/g,"");const notes=[];for(let i=0;i<s.length;i++){if(s[i]==="x"){let j=i+1;while(j<s.length&&s[j]==="-")j++;notes.push({st:i,len:j-i})}}return {s,notes}}
+P.forEach(p=>{const r=parse(p.v);p.s=r.s;p.notes=r.notes;p.steps=p.sub*8;
+ p.lyr=[...p.ly.replace("/","")];p.vow=[...p.vw.replace("/","")];p.noteAt={};p.notes.forEach((n,k)=>p.noteAt[n.st]=k);
+ if(p.lyr.length!==p.notes.length||p.vow.length!==p.notes.length)console.error("歌詞字數不符",p.t,p.lyr.length,p.notes.length)});
+
+
+
+const R=i=>P[i];
+const SONG=[
+ {sec:"前奏 Intro",dr:"ballad",mood:"安靜、留白。只有慢板鼓和最簡單的正拍人聲，先把場景（深夜、一個人）擺出來，讓聽眾的耳朵靜下來。",ph:[
+  {p:0,ly:"夜色很深/風很輕",vw:"eeee/eei",mel:[4,2,0,2,-1,0,-3],why:"每個字都踩在拍點上，最穩、最不搶戲。前奏要的是「鋪」，不是「勾」。"}]},
+ {sec:"主歌 Verse",dr:"pop8",mood:"像在講故事。字多、音域低、節奏平均，鼓換成流行 8 Beat，開始有往前走的感覺。",ph:[
+  {p:1,ly:"今天的風吹過街角/我想起了你",vw:"iaeeuoea/oaiei",mel:[0,0,2,2,4,4,2,2,0,0,2,4,0],why:"平均的八分音符＝說話的速度。主歌第一句用最「平」的節奏，聽眾才聽得清楚歌詞在講什麼。"},
+  {p:9,ly:"走著一個人走/路燈很長",vw:"oeieeo/ueea",mel:[0,2,2,4,2,0,2,4,2,0],why:"在八分音符中間挖一個休止，像走路時停了一下。跟上一句幾乎同節奏，只是少一格，就有變化又不陌生。"},
+  {p:3,ly:"城市的燈亮起/沒人在等",vw:"eieeai/eeae",mel:[2,2,4,2,0,2,0,2,2,4],why:"改成從「&」反拍進場，第 1 拍讓給鼓。節奏變鬆，暗示心情開始飄。"},
+  {p:1,ly:"手機的光照亮臉龐/卻沒有訊息",vw:"oieaaaaa/eeoii",mel:[0,0,2,2,4,5,4,2,2,0,-1,-1,0],why:"回到第一句的平均八分，形成 A-B-C-A 的結構。主歌結尾回到熟悉的節奏，耳朵有「回家」的感覺。"}]},
+ {sec:"預副歌 Pre-Chorus",dr:"pop8",mood:"蓄力。句子開始提早進場、跨小節線、甚至故意拖拍，製造「快要爆發了」的緊張感。",ph:[
+  {p:2,ly:"如果你/也在想我",vw:"uoi/eaao",mel:[-1,0,2,4,4,2,4],why:"弱起：句子在上一小節尾巴就搶先唱出來，重音字落在下一小節第 1 拍。這是預副歌最常見的「往前推」手法。"},
+  {p:5,ly:"一步一步靠近你的/心跳聲",vw:"iuiuaiie/iae",mel:[0,2,2,4,4,5,5,7,7,5,4],why:"搶拍：最後一個字提早在 4& 唱出、延長過小節線。旋律一路往上爬，節奏一路往前撲，張力拉到最高。"},
+  {p:12,ly:"我想慢慢地講/給你聽",vw:"oaaaia/eii",mel:[7,5,4,7,5,4,5,4,2],dr:"pop8x6",why:"四分音符三連音：人聲故意跟直直的鼓「打架」，聽起來像時間被拉慢。副歌前最後一口氣，製造懸念。"}]},
+ {sec:"副歌 Chorus",dr:"four",mood:"釋放。鼓換成四四拍舞曲鼓，人聲用好記、好跟唱的切分句＋長音口號，音域最高。",ph:[
+  {p:4,ly:"心跳在加速中/停不下來",vw:"iaaauo/iuaa",mel:[4,4,5,7,7,5,4,5,4,2],why:"3-3-2 切分：重音不在 2、3 拍上，跟平均的踢鼓互相錯開，這就是副歌的「勾子」（hook）。"},
+  {p:10,ly:"我們一起/飛",vw:"oeii/e",mel:[7,5,7,8,7],dr:"half",why:"長音＋短句：字很少、音很長，鼓切成半速，整個空間突然變大，最適合大合唱。"},
+  {p:4,ly:"今夜就讓晚風/帶我去愛",vw:"ieuaae/aoua",mel:[4,4,5,7,7,5,4,5,2,0],why:"重複第一句的 3-3-2 節奏，只換歌詞和收尾的音。副歌靠「重複」讓人記住。"},
+  {p:10,ly:"我們一起/飛",vw:"oeii/e",mel:[7,5,7,8,7],dr:"half",why:"口號再唱一次，和第一次一模一樣，聽眾第二次就能跟著唱。"}]},
+ {sec:"橋段 Bridge",dr:"rnb",mood:"轉換情緒。換成 R&B 律動和十六分音符快唸，跟副歌形成對比，讓最後一次副歌聽起來更新鮮。",ph:[
+  {p:8,ly:"你輕輕說愛/我慢半拍",vw:"iiioa/oaaa",mel:[2,4,4,2,0,2,0,-1,0],why:"十六分切分：字落在拍點之間，像說悄悄話。從副歌的大聲突然收小，製造反差。"},
+  {p:6,ly:"別問我為什麼一直往前衝/因為停下來就會被時間追上了",vw:"eeoeeeiiaao/ieiaaueeiauae",mel:[0,0,0,0,2,2,2,2,4,2,0,0,0,0,0,2,2,2,2,4,4,4,4,2],dr:"beat16",why:"十六分音符快速咬字（Rap）：一拍塞四個字，密度一下拉到最高，把能量重新推起來，接最後的副歌。"}]},
+ {sec:"最後副歌 Final Chorus",dr:"four",mood:"同樣的副歌再來一次。因為前面橋段收過又推過，這次聽起來更有力。",ph:[
+  {p:4,ly:"心跳在加速中/停不下來",vw:"iaaauo/iuaa",mel:[4,4,5,7,7,5,4,5,4,2],why:"同一個 3-3-2 勾子，第三次出現，已經變成記憶點。"},
+  {p:10,ly:"我們一起/飛",vw:"oeii/e",mel:[7,5,7,8,7],dr:"half",why:"長音口號。"},
+  {p:4,ly:"今夜就讓晚風/帶我去愛",vw:"ieuaae/aoua",mel:[4,4,5,7,7,5,4,5,2,0],why:"重複 3-3-2。"},
+  {p:10,ly:"我們一起/飛",vw:"oeii/e",mel:[7,5,4,2,0],dr:"half",why:"最後一句旋律改成往下收，告訴聽眾「要結束了」。"}]},
+ {sec:"尾奏 Outro",dr:"ballad",mood:"回到前奏的正拍和慢板鼓，首尾呼應，情緒落地。",ph:[
+  {p:0,ly:"夜色很深/風很輕",vw:"eeee/eei",mel:[4,2,0,2,-1,-1,0],why:"和前奏同一句、同一個節奏，只把最後的音收在主音上，整首歌「回到原點」。"}]}
+];
+const SEQ=[];SONG.forEach((sec,si)=>sec.ph.forEach((ph,k)=>{const b=R(ph.p);const lyr=[...ph.ly.replace("/","")],vow=[...ph.vw.replace("/","")];
+ const dk=ph.dr||sec.dr;let drum=DRUMS[dk];if(drum.sub!==b.sub){drum=b.sub===3?DRUMS.shuffle:b.sub===6?DRUMS.pop8x6:DRUMS.pop8}
+ const noteAt={};b.notes.forEach((n,j)=>noteAt[n.st]=j);
+ if(lyr.length!==b.notes.length||vow.length!==b.notes.length)console.error("字數不符",sec.sec,ph.ly,lyr.length,b.notes.length);
+ SEQ.push({si,k,b,lyr,vow,mel:ph.mel,why:ph.why,drum,dk:drum===DRUMS[dk]?dk:Object.keys(DRUMS).find(x=>DRUMS[x]===drum),noteAt,b1:ph.ly.split("/")[0].length,num:ph.p+1})}));
+
+/* ---------- 音訊 ---------- */
+let ctx,master,noiseBuf;
+function initAudio(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.8;
+ const comp=ctx.createDynamicsCompressor();master.connect(comp);comp.connect(ctx.destination);
+ noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g);g.connect(master);o.start(t);o.stop(t+.4)}
+function noise(t,dur,type,freq,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+dur+.02)}
+function snare(t){noise(t,.18,"bandpass",1800,.5);const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=190;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g);g.connect(master);o.start(t);o.stop(t+.12)}
+function hat(t,acc){noise(t,.04,"highpass",8000,acc?.22:.13)}
+function clickS(t,hi){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=hi?1600:1100;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(g);g.connect(master);o.start(t);o.stop(t+.06)}
+const SCALE=[0,2,4,5,7,9,11];function deg2midi(d){const o=Math.floor(d/7),r=((d%7)+7)%7;return 64+o*12+SCALE[r]}
+const FORM={a:[[800,1],[1150,.5],[2900,.12]],e:[[480,1],[1700,.35],[2500,.12]],i:[[300,1],[2300,.3],[3000,.15]],o:[[460,1],[800,.6],[2800,.06]],u:[[330,1],[700,.35],[2500,.05]]};
+function voice(t,dur,deg,acc,vow){const f=440*Math.pow(2,(deg2midi(deg)-69)/12);const end=t+Math.max(.07,dur*.92);
+ const o1=ctx.createOscillator(),o2=ctx.createOscillator();o1.type="sawtooth";o2.type="sawtooth";
+ o1.frequency.setValueAtTime(f*.97,t);o1.frequency.exponentialRampToValueAtTime(f,t+.05);o2.frequency.setValueAtTime(f*.97*1.004,t);o2.frequency.exponentialRampToValueAtTime(f*1.004,t+.05);
+ const vib=ctx.createOscillator(),vg=ctx.createGain();vib.frequency.value=5.2;vg.gain.setValueAtTime(0,t);if(dur>.3)vg.gain.linearRampToValueAtTime(f*.012,t+Math.min(dur*.6,.5));vib.connect(vg);vg.connect(o1.frequency);vg.connect(o2.frequency);
+ const src=ctx.createGain();src.gain.value=.5;o1.connect(src);o2.connect(src);
+ const out=ctx.createGain();const pk=(acc?1:.78)*({a:1.1,e:1.25,i:.52,o:1,u:.35}[vow]||1);out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(pk,t+.025);out.gain.setValueAtTime(pk*.85,Math.max(t+.03,end-.05));out.gain.linearRampToValueAtTime(0,end);
+ (FORM[vow]||FORM.a).forEach(([fr,amp])=>{const bp=ctx.createBiquadFilter();bp.type="bandpass";bp.frequency.value=fr;bp.Q.value=fr<1000?6:10;const g=ctx.createGain();g.gain.value=amp*1.6;src.connect(bp);bp.connect(g);g.connect(out)});
+ out.connect(master);
+ noise(t,.025,"bandpass",3500,acc?.12:.08);
+ [o1,o2,vib].forEach(o=>{o.start(t);o.stop(end+.05)})}
+
+
+const $=id=>document.getElementById(id);let mix="both";
+document.querySelectorAll("#mix button").forEach(b=>b.onclick=()=>{mix=b.dataset.m;document.querySelectorAll("#mix button").forEach(x=>x.classList.toggle("on",x===b))});
+const bpmEl=$("bpm");bpmEl.oninput=()=>$("bpmv").textContent=bpmEl.value;
+$("exp").onchange=e=>document.body.classList.toggle("noexp",!e.target.checked);
+$("blind").onchange=e=>document.body.classList.toggle("blind",e.target.checked);
+const PN=q=>`#${q.num} ${q.b.t}`;
+const dn={pop8:"流行 8 Beat",four:"四四拍舞曲",beat16:"16 Beat",half:"半速",rnb:"R&B",shuffle:"Shuffle",ballad:"慢板抒情",pop8x6:"流行 8 Beat"};
+/* 時間軸 */
+const tl=$("tl");let gi=0;
+SONG.forEach((sec,si)=>{const d=document.createElement("div");d.className="secbox";d.innerHTML=`<h3>${sec.sec}</h3><p class="m">${sec.mood}</p>`;
+ sec.ph.forEach(()=>{const q=SEQ[gi],idx=gi;const c=document.createElement("div");c.className="chip";c.id="q"+idx;
+  c.innerHTML=`<span class="n pname">${PN(q)}</span><span class="l">${q.lyr.slice(0,q.b1).join("")} / ${q.lyr.slice(q.b1).join("")}</span><span class="bars">鼓：${dn[q.dk]}</span>`;
+  c.onclick=()=>start(idx);d.appendChild(c);gi++});tl.appendChild(d)});
+function gridHTML(q){const b=q.b,n=b.steps,col=`grid-template-columns:repeat(${n},minmax(10px,1fr))`;let v="";
+ for(let i=0;i<n;i++){const c=b.s[i],cls=["cell"];if(i%b.sub===0)cls.push(i%(b.sub*4)===0?"barstart":"beat");if(c==="x")cls.push("on");else if(c==="-")cls.push("hold");v+=`<div class="${cls.join(" ")}" data-i="${i}">${c==="x"?q.lyr[q.noteAt[i]]:""}</div>`}
+ const dr=(nm,str)=>{const f=str+str;let h="";for(let i=0;i<n;i++){const cls=["cell"];if(i%b.sub===0)cls.push(i%(b.sub*4)===0?"barstart":"beat");if(f[i]==="x")cls.push("on");h+=`<div class="${cls.join(" ")}"></div>`}return `<div class="grid drow" style="${col}">${h}</div>`};
+ return `<div class="rowname">人聲格子譜（藍粗線＝小節開頭）</div><div class="grid vgrid" style="${col}">${v}</div><div class="rowname">鼓：Hi-hat／小鼓／踢鼓（${dn[q.dk]}）</div>`+dr("h",q.drum.h)+dr("s",q.drum.s)+dr("k",q.drum.k)}
+function showNow(i){const q=SEQ[i],sec=SONG[q.si];
+ $("now").innerHTML=`<div class="sec">${sec.sec}</div><div class="mood">${sec.mood}</div><span class="pat pname">${PN(q)}</span><div class="why">${q.why}</div>
+ <div class="lyr">${q.lyr.map((ch,k)=>(k===q.b1?'<span class="sep">/</span>':'')+`<span data-n="${k}">${ch}</span>`).join("")}</div>${gridHTML(q)}`;
+ document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("cur",c.id==="q"+i));
+ }
+/* 排程 */
+let playing=false,timer,raf,nextT,pi,step,inCount,visQ=[],shown=-1;
+$("play").onclick=()=>playing?stop():start(0);
+function start(i){initAudio();ctx.resume();stop();playing=true;$("play").textContent="■ 停止";pi=i;step=0;inCount=4;nextT=ctx.currentTime+.08;shown=-1;showNow(i);const nr=$("now").getBoundingClientRect();if(nr.top<0||nr.top>innerHeight*.5)window.scrollTo({top:scrollY+nr.top-110,behavior:"smooth"});timer=setInterval(sched,25);sched();raf=requestAnimationFrame(draw)}
+function stop(){if(!playing)return;playing=false;clearInterval(timer);cancelAnimationFrame(raf);visQ=[];$("play").textContent="▶ 播放整首";document.querySelectorAll(".cell.now,.lyr .sing").forEach(c=>c.classList.remove("now","sing"))}
+function sched(){while(nextT<ctx.currentTime+.12){
+ if(inCount>0){clickS(nextT,inCount===4);inCount--;nextT+=60/bpmEl.value;continue}
+ if(pi>=SEQ.length){const t=nextT;setTimeout(()=>{if(playing&&pi>=SEQ.length)stop()},(t-ctx.currentTime)*1000+400);nextT=1e9;return}
+ const q=SEQ[pi],b=q.b,sd=60/bpmEl.value/b.sub,s=step,bs=s%(b.sub*4),d=q.drum;
+ if(mix!=="voc"){if(d.k[bs]==="x")kick(nextT);if(d.s[bs]==="x")snare(nextT);if(d.h[bs]==="x")hat(nextT,bs%b.sub===0)}
+ if(mix!=="drum"&&q.noteAt[s]!==undefined){const j=q.noteAt[s],n=b.notes[j];voice(nextT,n.len*sd,q.mel[j%q.mel.length],s%b.sub===0,q.vow[j])}
+ if($("click").checked&&s%b.sub===0)clickS(nextT,bs===0);
+ visQ.push({t:nextT,pi,s});step++;nextT+=sd;if(step>=b.steps){step=0;pi++}}}
+function draw(){if(!playing)return;const now=ctx.currentTime;let e=null;while(visQ.length&&visQ[0].t<=now)e=visQ.shift();
+ if(e){if(e.pi!==shown){shown=e.pi;showNow(e.pi)}const q=SEQ[e.pi];document.querySelectorAll("#now .vgrid .cell").forEach(c=>c.classList.toggle("now",+c.dataset.i===e.s));
+  let k=-1;for(const n of q.b.notes)if(e.s>=n.st&&e.s<n.st+n.len){k=q.noteAt[n.st];break}
+  document.querySelectorAll("#now .lyr span[data-n]").forEach(x=>x.classList.toggle("sing",+x.dataset.n===k))}
+ raf=requestAnimationFrame(draw)}
+document.addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();playing?stop():start(0)}});
+</script></body></html>

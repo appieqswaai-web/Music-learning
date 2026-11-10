@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>流行歌人聲節奏型・聽感練習</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#222;--mute:#777;--acc:#d9480f;--acc2:#1971c2;--line:#e2e0da}
+@media (prefers-color-scheme:dark){:root{--bg:#18181b;--card:#232327;--ink:#eee;--mute:#999;--line:#38383d}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{padding:20px 16px 8px;max-width:900px;margin:auto}h1{font-size:1.4rem;margin:0 0 4px}header p{margin:4px 0;color:var(--mute);font-size:.92rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 16px}
+.bar .in{max-width:900px;margin:auto;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.92rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--card);color:var(--ink);padding:6px 10px;cursor:pointer;font:inherit}.seg button.on{background:var(--acc2);color:#fff}
+input[type=range]{width:130px;vertical-align:middle}label{cursor:pointer}
+main{max-width:900px;margin:auto;padding:8px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+.card.playing{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 30%,transparent)}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.num{font-weight:700;color:var(--acc);min-width:2.2em}
+.title{font-weight:700;font-size:1.05rem}.title.hid{color:var(--mute);font-weight:400;font-style:italic}
+.tag{font-size:.78rem;color:var(--mute);border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.btn.play{background:var(--acc);border-color:var(--acc);color:#fff;min-width:84px}.btn:active{transform:scale(.97)}
+.spacer{flex:1}
+.ans{display:none;margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}.card.rev .ans{display:block}
+.grid{display:grid;gap:2px;margin:6px 0 2px;overflow-x:auto}.cell{height:30px;border-radius:3px;background:color-mix(in srgb,var(--ink) 6%,transparent);position:relative}
+.cell.beat{box-shadow:inset 2px 0 0 color-mix(in srgb,var(--ink) 35%,transparent)}.cell.barstart{box-shadow:inset 3px 0 0 var(--acc2)}
+.cell.on{background:var(--acc)}.vgrid .cell.on{color:#fff;font-size:.78rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.lyr{margin-top:10px;font-size:1.25rem;letter-spacing:.08em}.lyr span{padding:0 1px;border-radius:4px;transition:background .05s}.lyr span.sing{background:var(--acc);color:#fff}.lyr .sep{color:var(--mute);margin:0 .4em}.nolyr .lyr{display:none}.cell.hold{background:color-mix(in srgb,var(--acc) 40%,transparent)}
+.cell.now{outline:2px solid var(--acc2);outline-offset:-2px}
+.lbl{display:grid;gap:2px;font-size:.66rem;color:var(--mute);text-align:center}
+.drow .cell{height:12px}.drow .cell.on{background:var(--acc2)}
+.rowname{font-size:.75rem;color:var(--mute);margin-top:6px}
+.count{font-family:ui-monospace,Menlo,monospace;background:color-mix(in srgb,var(--ink) 6%,transparent);padding:6px 8px;border-radius:6px;font-size:.88rem;overflow-x:auto;white-space:pre}
+.count b{color:var(--acc)}
+.ans p{margin:8px 0}.ans .k{color:var(--acc2);font-weight:700}
+.legend{font-size:.8rem;color:var(--mute)}.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin:0 3px 0 8px}
+.quiz{display:none}.quizmode .quiz{display:block}
+#quizbox{background:var(--card);border:2px solid var(--acc2);border-radius:12px;padding:14px 16px;margin:14px 0}
+#quizbox .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}#quizbox .opts .btn.right{background:#2f9e44;color:#fff;border-color:#2f9e44}#quizbox .opts .btn.wrong{background:#e03131;color:#fff;border-color:#e03131}
+footer{max-width:900px;margin:auto;padding:0 16px 40px;color:var(--mute);font-size:.85rem}
+</style></head><body>
+<header>
+<h1>流行歌常見人聲節奏型・聽感練習</h1>
+<p>玩法：先按 ▶ 只用耳朵聽，試著用手拍出人聲節奏、猜它是哪種節奏型、從哪一拍進來；想好了再按「揭曉答案」看格子譜和數拍法。</p>
+<p>人聲用「母音共鳴」合成（會唱 a、e、i、o、u，搭配原創歌詞逐字亮起，可以跟著唱；仍是機器聲，重點是節奏），鼓用合成鼓組。2 小節一循環，4/4 拍。整理日期：2026-11-06 ・ 分類：音樂分析 / 節奏感訓練</p>
+</header>
+<div class="bar"><div class="in">
+ <span>聽：<span class="seg" id="mix"><button data-m="both" class="on">人聲＋鼓</button><button data-m="voc">只人聲</button><button data-m="drum">只鼓</button></span></span>
+ <span>速度 <input type="range" id="bpm" min="50" max="160" value="90"> <b id="bpmv">90</b> BPM</span>
+ <label><input type="checkbox" id="click"> 節拍器</label>
+ <label><input type="checkbox" id="countin" checked> 先數 1 小節</label>
+ <label><input type="checkbox" id="loop" checked> 循環</label>
+ <label><input type="checkbox" id="showly" checked> 顯示歌詞（跟唱）</label>
+ <label><input type="checkbox" id="hide"> 隱藏名稱（盲聽）</label>
+ <button class="btn" id="quizbtn">🎲 隨機考我</button>
+</div></div>
+<main id="main">
+<div id="quizbox" class="quiz"></div>
+</main>
+<footer>
+<p class="legend">格子圖例：<i style="background:var(--acc)"></i>人聲起音 <i style="background:color-mix(in srgb,var(--acc) 40%,transparent)"></i>音延長 <i style="background:var(--acc2)"></i>鼓（踢鼓／小鼓／Hi-hat）・藍色粗線＝小節開頭，灰線＝每一拍。</p>
+<p>練習建議：① 先開「只人聲」用手拍節奏；② 改成「人聲＋鼓」，腳踩每一拍、手拍人聲；③ 開「只鼓」，自己把人聲節奏用「答答」唸出來；④ 速度從 70 慢慢加到原速。最後用「🎲 隨機考我」盲測，能八成答對就代表這些節奏型已經進耳朵了。</p>
+</footer>
+<script>
+/* 節奏寫法：x=起音，-=延長，.=休止；每小節 sub×4 格（sub=4 十六分格，sub=3 三連音格）*/
+const DRUMS={
+ pop8:{sub:4,k:"x.......x.x.....",s:"....x.......x...",h:"x.x.x.x.x.x.x.x."},
+ four:{sub:4,k:"x...x...x...x...",s:"....x.......x...",h:"..x...x...x...x."},
+ beat16:{sub:4,k:"x......x..x.....",s:"....x.......x...",h:"xxxxxxxxxxxxxxxx"},
+ half:{sub:4,k:"x.........x.....",s:"........x.......",h:"x.x.x.x.x.x.x.x."},
+ rnb:{sub:4,k:"x..x......x..x..",s:"....x.......x...",h:"x.xxx.x.x.xxx.x."},
+ shuffle:{sub:3,k:"x.....x.x...",s:"...x.....x..",h:"x.xx.xx.xx.x"},
+ pop8x6:{sub:6,k:"x...........x..x........",s:"......x...........x.....",h:"x..x..x..x..x..x..x..x.."},
+ ballad:{sub:4,k:"x.......x.......",s:"....x.......x...",h:"x...x...x...x..."}
+};
+const P=[
+ {t:"四分音符・正拍",tag:"暖身",dr:"ballad",v:"x---x---x---x---|x---x---x-------",ly:"慢慢走來/等你來",vw:"aaoa/eia",mel:[0,2,4,2,0,2,-1],
+  ex:"每個字都落在拍點上（1、2、3、4），最穩、最像兒歌或慢板抒情歌的副歌長句。先用它確認你的手能跟鼓對齊。",
+  how:"人聲和踢鼓／小鼓完全重疊，聽起來「很正」。"},
+ {t:"八分音符・平均流動",tag:"主歌常見",dr:"pop8",v:"x-x-x-x-x-x-x-x-|x-x-x-x-x-------",ly:"今天的風吹過街角/我想起了你",vw:"iaeeuoea/oaiei",mel:[0,0,2,2,4,4,2,2,0,0,2,4,0],
+  ex:"一拍兩個字、平均流動，是華語和 J-POP 主歌最基本的骨架（日文一假名一音也常是這樣）。",
+  how:"跟 Hi-hat 完全同步，每兩下 Hi-hat 一下鼓點。"},
+ {t:"弱起（Pickup）・提早進場",tag:"超常見",dr:"pop8",v:"..........x-x-x-|x---x-x-x-------",ly:"就讓我/飛向天空",vw:"uao/eaao",mel:[-3,-1,0,2,2,0,-1,0],
+  ex:"句子在前一小節尾巴（3&、4、4&）就先唱，讓重音字剛好落在下一小節第 1 拍。大部分流行歌的句子都不是從「1」開始。",
+  how:"人聲出現時鼓還在上一小節，第一個長音才跟踢鼓撞在一起。"},
+ {t:"反拍進場・從「&」開始",tag:"律動感",dr:"pop8",v:"..x-x-x-x-x-x---|..x-x-x-x-------",ly:"城市的燈亮起/沒人在等",vw:"eieeai/eeae",mel:[2,2,4,2,0,2,0,2,2,4,2,0],
+  ex:"每句跳過第 1 拍，從「1 的後半拍（1&）」才進來。空出來的第 1 拍讓鼓先講話，人聲聽起來比較鬆、比較帥。",
+  how:"踢鼓打完第 1 拍，人聲才緊接著進來。"},
+ {t:"3-3-2 切分（Tresillo）",tag:"切分代表",dr:"four",v:"x--x--x-x--x--x-|x--x--x-x-------",ly:"心跳在加速中/停不下來",vw:"iaaauo/iuaa",mel:[0,0,2,4,4,2,0,-1,0,2,4,2],
+  ex:"一小節 8 個八分格被切成 3＋3＋2。重音故意不落在 2、3 拍上，是 K-POP、拉丁、EDM 抒情歌副歌超愛用的「勾人」節奏。",
+  how:"四四拍踢鼓是平均的「咚咚咚咚」，人聲卻是「答—答—答答」，兩者互相錯開。"},
+ {t:"搶拍（Anticipation）・跨小節線",tag:"超常見",dr:"pop8",v:"x-x-x-x-x-x-x-x-|------..x-x-x---",ly:"一步一步走向明天/不回頭",vw:"iuiuoaia/uuo",mel:[0,2,4,4,2,0,2,5,4,2,0],
+  ex:"本來該在下一小節第 1 拍唱的重點字，提早半拍在「4&」就唱出來並延長過小節線。聽起來像「往前撲」，是流行歌最有衝勁的招式之一。",
+  how:"踢鼓落下第 1 拍時，人聲已經在拉長音了，沒有新的字。"},
+ {t:"十六分音符・快速咬字",tag:"饒舌 / 快歌",dr:"beat16",v:"xxxxxxxxx-x-x---|xxxxxxxxxxxx.x--",ly:"別問我為什麼一直往前衝/因為停下來就會被時間追上了",vw:"eeoeeeiiaao/ieiaaueeiauae",mel:[0,0,0,0,2,2,2,2,4,2,0,0,0,0,0,2,2,2,2,4,4,4,4,2],
+  ex:"一拍塞四個字，常見於 Rap 段落、J-POP 快歌主歌、或副歌前的「連珠炮」。重點是穩：每個字一樣長，不要越唱越快。",
+  how:"跟 16 分 Hi-hat 一下對一下，句尾才放慢成八分。"},
+ {t:"附點節奏・長短長短",tag:"跳躍感",dr:"pop8",v:"x--xx--xx--xx---|x--xx--xx-------",ly:"蹦蹦跳跳去旅行/陽光在微笑",vw:"eeaauui/aaaea",mel:[0,2,4,5,4,2,0,2,4,5,4,2],
+  ex:"「附點八分＋十六分」反覆：長—短、長—短。讓旋律有彈跳、走路一拐一拐的感覺，常見於輕快的 City Pop、迪士尼風歌曲。",
+  how:"長音在拍點上，短音緊貼下一拍前面。"},
+ {t:"十六分切分・R&B 律動",tag:"R&B / Neo-Soul",dr:"rnb",v:"x-.x-.x---x-.x--|.x-.x-x-x-------",ly:"你輕輕說愛/我慢半拍",vw:"iiioa/oaaa",mel:[0,2,4,2,0,2,4,4,2,0,2,-1],
+  ex:"重音落在「e」和「a」這種十六分位置，句子像在拍點之間滑來滑去。R&B、Neo-Soul、近年華語 R&B 主歌很常見，也最難靠聽一次就抓準。",
+  how:"很多字故意不跟任何鼓同時出現，夾在 Hi-hat 之間。"},
+ {t:"句中休止・促音式停頓",tag:"J-POP",dr:"pop8",v:"x-x-.-x-x-x-.-x-|x-x-.-x-x-------",ly:"等等你先別走/聽我說完",vw:"eeiaeo/iooa",mel:[0,2,2,4,2,0,2,4,4,2],
+  ex:"一串八分音符中間突然空一格（像日文的「っ」促音），形成短暫的煞車。休止本身就是節奏的一部分。",
+  how:"空掉的那一格剛好是小鼓或 Hi-hat 單獨出現的地方。"},
+ {t:"長音＋短句・副歌口號",tag:"副歌常見",dr:"half",v:"x-------x-x-x---|x---------------",ly:"我們一起/飛",vw:"oeii/e",mel:[4,2,4,5,4],
+  ex:"一個拉很長的音，接一個短短的三連字，再落一個長音。字少、好記、好合唱，常配半速鼓（Half-time）讓副歌聽起來「變大」。",
+  how:"鼓的小鼓在第 3 拍（半速），人聲長音底下鼓的空間很大。"},
+ {t:"三連音律動（Shuffle）",tag:"搖擺",dr:"shuffle",sub:3,v:"x-xx-xx-xx--|x-xx-xx-----",ly:"搖擺搖擺跟著我/一起搖一搖",vw:"aaaaeeo/iiaia",mel:[0,2,4,2,4,5,4,2,0,2,4,2,0],
+  ex:"一拍分三份，人聲走「長—短」的搖擺感（像 Blues、Doo-wop、部分 Bruno Mars 式復古流行）。跟附點節奏很像，但更圓、更鬆。",
+  how:"Hi-hat 也是「噠—嗒、噠—嗒」的三連音搖擺。"},
+ {t:"四分音符三連音・拖拍感",tag:"進階",dr:"pop8x6",sub:6,v:"x---x---x---x---x---x---|x-----x-----x-----------",ly:"我想慢慢地講/給你聽",vw:"oaaaia/eii",mel:[4,2,0,4,2,0,2,2,0],
+  ex:"第一小節唱的是「兩拍塞三個音」的四分音符三連音，跟底下直直的八分鼓明顯打架，聽起來像故意拖、像在講話。第二小節回到正常四分音符對照。抒情歌、Billie Eilish 式慵懶唱法常用。",
+  how:"人聲每個音都不跟第 2、4 拍小鼓對齊，第二小節才回到同步。"}
+];
+P.forEach(p=>{p.sub=p.sub||4;p.drum=DRUMS[p.dr]});
+
+/* ---------- 解析 ---------- */
+function parse(str){const s=str.replace(/\|/g,"");const notes=[];for(let i=0;i<s.length;i++){if(s[i]==="x"){let j=i+1;while(j<s.length&&s[j]==="-")j++;notes.push({st:i,len:j-i})}}return {s,notes}}
+P.forEach(p=>{const r=parse(p.v);p.s=r.s;p.notes=r.notes;p.steps=p.sub*8;
+ p.lyr=[...p.ly.replace("/","")];p.vow=[...p.vw.replace("/","")];p.noteAt={};p.notes.forEach((n,k)=>p.noteAt[n.st]=k);
+ if(p.lyr.length!==p.notes.length||p.vow.length!==p.notes.length)console.error("歌詞字數不符",p.t,p.lyr.length,p.notes.length)});
+
+/* ---------- 介面 ---------- */
+const main=document.getElementById("main");
+function labels(sub){const L=sub===4?["e","&","a"]:sub===3?["la","li"]:["","","&","",""];const a=[];for(let b=0;b<2;b++)for(let q=1;q<=4;q++){a.push(String(q));L.forEach(x=>a.push(x))}return a}
+function gridHTML(p){const n=p.steps,lb=labels(p.sub);const col=`grid-template-columns:repeat(${n},minmax(14px,1fr))`;
+ let v="",l="";for(let i=0;i<n;i++){const c=p.s[i];const cls=["cell"];if(i%p.sub===0)cls.push(i%(p.sub*4)===0?"barstart":"beat");if(c==="x")cls.push("on");else if(c==="-")cls.push("hold");v+=`<div class="${cls.join(" ")}" data-i="${i}">${c==="x"?p.lyr[p.noteAt[i]]:""}</div>`;l+=`<div>${i%p.sub===0?"<b>"+lb[i]+"</b>":lb[i]}</div>`}
+ const d=p.drum,dr=(name,str)=>{const full=str+str;let h="";for(let i=0;i<n;i++){const cls=["cell"];if(i%p.sub===0)cls.push(i%(p.sub*4)===0?"barstart":"beat");if(full[i]==="x")cls.push("on");h+=`<div class="${cls.join(" ")}"></div>`}return `<div class="rowname">${name}</div><div class="grid drow" style="${col}">${h}</div>`};
+ return `<div class="rowname">人聲</div><div class="grid vgrid" style="${col}">${v}</div><div class="lbl" style="${col}">${l}</div>`+dr("Hi-hat",d.h)+dr("小鼓",d.s)+dr("踢鼓",d.k)}
+function countText(p){const lb=labels(p.sub);let out="";for(let i=0;i<p.steps;i++){if(i===p.sub*4)out+=" | ";const c=p.s[i];const t=lb[i];out+=(c==="x"?`<b>${t||"○"}</b>`:c==="-"?"~":"·")+" "}return out}
+const drumName={pop8:"流行 8 Beat",pop8x6:"流行 8 Beat（以 6 格/拍顯示）",four:"四四拍（Four-on-the-floor）",beat16:"16 Beat",half:"半速（Half-time）",rnb:"R&B 律動",shuffle:"Shuffle 三連音",ballad:"慢板抒情"};
+P.forEach((p,i)=>{const c=document.createElement("div");c.className="card";c.id="c"+i;
+ c.innerHTML=`<div class="top"><span class="num">#${i+1}</span><span class="title" data-t="${p.t}">${p.t}</span><span class="tag">${p.tag}</span><span class="spacer"></span><button class="btn play">▶ 播放</button><button class="btn rv">揭曉答案</button></div>
+ <div class="lyr">${(()=>{const b1=p.ly.split("/")[0].length;return p.lyr.map((ch,k)=>(k===b1?'<span class="sep">/</span>':'')+`<span data-n="${k}">${ch}</span>`).join("")})()}</div>
+ <div class="ans"><p><span class="k">節奏型：</span>${p.t}　<span class="tag">鼓：${drumName[p.dr]}</span></p>${gridHTML(p)}
+ <p class="rowname">數拍唸法（粗體＝人聲起音，~＝延長，·＝休止）：</p><div class="count">${countText(p)}</div>
+ <p><span class="k">說明：</span>${p.ex}</p><p><span class="k">跟鼓的關係：</span>${p.how}</p></div>`;
+ c.querySelector(".play").onclick=()=>toggle(i);c.querySelector(".rv").onclick=e=>{c.classList.toggle("rev");e.target.textContent=c.classList.contains("rev")?"收起答案":"揭曉答案"};
+ main.appendChild(c)});
+function applyHide(){const h=document.getElementById("hide").checked;document.querySelectorAll(".card .title").forEach(t=>{t.textContent=h?"（名稱已隱藏，先聽再猜）":t.dataset.t;t.classList.toggle("hid",h)});document.querySelectorAll(".card .tag:not(.ans .tag)").forEach(t=>t.style.visibility=h?"hidden":"visible")}
+document.getElementById("hide").onchange=applyHide;
+document.getElementById("showly").onchange=e=>document.body.classList.toggle("nolyr",!e.target.checked);
+let mix="both";document.querySelectorAll("#mix button").forEach(b=>b.onclick=()=>{mix=b.dataset.m;document.querySelectorAll("#mix button").forEach(x=>x.classList.toggle("on",x===b))});
+const bpmEl=document.getElementById("bpm");bpmEl.oninput=()=>document.getElementById("bpmv").textContent=bpmEl.value;
+
+/* ---------- 音訊 ---------- */
+let ctx,master,noiseBuf;
+function initAudio(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.8;
+ const comp=ctx.createDynamicsCompressor();master.connect(comp);comp.connect(ctx.destination);
+ noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g);g.connect(master);o.start(t);o.stop(t+.4)}
+function noise(t,dur,type,freq,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+dur+.02)}
+function snare(t){noise(t,.18,"bandpass",1800,.5);const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=190;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g);g.connect(master);o.start(t);o.stop(t+.12)}
+function hat(t,acc){noise(t,.04,"highpass",8000,acc?.22:.13)}
+function clickS(t,hi){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=hi?1600:1100;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(g);g.connect(master);o.start(t);o.stop(t+.06)}
+const SCALE=[0,2,4,5,7,9,11];function deg2midi(d){const o=Math.floor(d/7),r=((d%7)+7)%7;return 64+o*12+SCALE[r]}
+const FORM={a:[[800,1],[1150,.5],[2900,.12]],e:[[480,1],[1700,.35],[2500,.12]],i:[[300,1],[2300,.3],[3000,.15]],o:[[460,1],[800,.6],[2800,.06]],u:[[330,1],[700,.35],[2500,.05]]};
+function voice(t,dur,deg,acc,vow){const f=440*Math.pow(2,(deg2midi(deg)-69)/12);const end=t+Math.max(.07,dur*.92);
+ const o1=ctx.createOscillator(),o2=ctx.createOscillator();o1.type="sawtooth";o2.type="sawtooth";
+ o1.frequency.setValueAtTime(f*.97,t);o1.frequency.exponentialRampToValueAtTime(f,t+.05);o2.frequency.setValueAtTime(f*.97*1.004,t);o2.frequency.exponentialRampToValueAtTime(f*1.004,t+.05);
+ const vib=ctx.createOscillator(),vg=ctx.createGain();vib.frequency.value=5.2;vg.gain.setValueAtTime(0,t);if(dur>.3)vg.gain.linearRampToValueAtTime(f*.012,t+Math.min(dur*.6,.5));vib.connect(vg);vg.connect(o1.frequency);vg.connect(o2.frequency);
+ const src=ctx.createGain();src.gain.value=.5;o1.connect(src);o2.connect(src);
+ const out=ctx.createGain();const pk=(acc?1:.78)*({a:1.1,e:1.25,i:.52,o:1,u:.35}[vow]||1);out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(pk,t+.025);out.gain.setValueAtTime(pk*.85,Math.max(t+.03,end-.05));out.gain.linearRampToValueAtTime(0,end);
+ (FORM[vow]||FORM.a).forEach(([fr,amp])=>{const bp=ctx.createBiquadFilter();bp.type="bandpass";bp.frequency.value=fr;bp.Q.value=fr<1000?6:10;const g=ctx.createGain();g.gain.value=amp*1.6;src.connect(bp);bp.connect(g);g.connect(out)});
+ out.connect(master);
+ noise(t,.025,"bandpass",3500,acc?.12:.08);
+ [o1,o2,vib].forEach(o=>{o.start(t);o.stop(end+.05)})}
+
+/* ---------- 排程 ---------- */
+let cur=-1,timer=null,nextT=0,step=0,inCount=0,visQ=[],raf=null,onEnd=null;
+function stepDur(p){return 60/bpmEl.value/p.sub}
+function toggle(i,cb){initAudio();ctx.resume();if(cur===i){stop();return}stop();cur=i;onEnd=cb||null;const p=P[i];
+ document.getElementById("c"+i)?.classList.add("playing");setBtn(i,"■ 停止");
+ step=0;inCount=document.getElementById("countin").checked?p.sub*4:0;nextT=ctx.currentTime+.08;timer=setInterval(sched,25);sched();raf=requestAnimationFrame(draw)}
+function setBtn(i,txt){const b=document.querySelector("#c"+i+" .play");if(b)b.textContent=txt}
+function stop(){if(cur<0)return;clearInterval(timer);cancelAnimationFrame(raf);document.getElementById("c"+cur)?.classList.remove("playing");setBtn(cur,"▶ 播放");document.querySelectorAll(".cell.now").forEach(c=>c.classList.remove("now"));document.querySelectorAll(".lyr .sing").forEach(c=>c.classList.remove("sing"));const cb=onEnd;cur=-1;visQ=[];onEnd=null;if(cb)cb()}
+function sched(){const p=P[cur];while(nextT<ctx.currentTime+.12){const sd=stepDur(p);
+ if(inCount>0){const k=p.sub*4-inCount;if(k%p.sub===0)clickS(nextT,k===0);inCount--;nextT+=sd;continue}
+ if(step>=p.steps){if(document.getElementById("loop").checked)step=0;else{const t=nextT;setTimeout(()=>{if(cur>=0&&P[cur]===p)stop()},(t-ctx.currentTime)*1000+200);nextT=1e9;return}}
+ const s=step,bs=s%(p.sub*4),d=p.drum;
+ if(mix!=="voc"){if(d.k[bs]==="x")kick(nextT);if(d.s[bs]==="x")snare(nextT);if(d.h[bs]==="x")hat(nextT,bs%p.sub===0)}
+ if(mix!=="drum"){const ni=p.notes.findIndex(n=>n.st===s);if(ni>=0){const n=p.notes[ni];voice(nextT,n.len*sd,p.mel[ni%p.mel.length],s%p.sub===0,p.vow[ni])}}
+ if(document.getElementById("click").checked&&s%p.sub===0)clickS(nextT,bs===0);
+ visQ.push({t:nextT,s});step++;nextT+=sd}}
+function draw(){if(cur<0)return;const now=ctx.currentTime;let s=-1;while(visQ.length&&visQ[0].t<=now){s=visQ.shift().s}
+ if(s>=0){const p=P[cur];document.querySelectorAll("#c"+cur+" .vgrid .cell").forEach(c=>c.classList.toggle("now",+c.dataset.i===s));
+ let k=-1;for(const n of p.notes){if(s>=n.st&&s<n.st+n.len){k=p.noteAt[n.st];break}}
+ document.querySelectorAll("#c"+cur+" .lyr span[data-n]").forEach(e=>e.classList.toggle("sing",+e.dataset.n===k))}raf=requestAnimationFrame(draw)}
+
+/* ---------- 隨機考我 ---------- */
+const qb=document.getElementById("quizbox");let qi=-1;
+document.getElementById("quizbtn").onclick=()=>{document.body.classList.add("quizmode");newQ();qb.scrollIntoView({behavior:"smooth"})};
+function newQ(){stop();let n;do{n=Math.floor(Math.random()*P.length)}while(n===qi&&P.length>1);qi=n;
+ const opts=new Set([n]);while(opts.size<4)opts.add(Math.floor(Math.random()*P.length));const arr=[...opts].sort(()=>Math.random()-.5);
+ qb.innerHTML=`<b>🎲 盲聽測驗</b>：聽聽看這是哪一種人聲節奏型？（建議先選「只人聲」或「人聲＋鼓」）<div style="margin-top:8px"><button class="btn play" id="qplay">▶ 播放題目</button> <button class="btn" id="qnext">換一題</button> <button class="btn" id="qclose">關閉</button></div><div class="opts">${arr.map(k=>`<button class="btn" data-k="${k}">${P[k].t}</button>`).join("")}</div><div id="qres" style="margin-top:8px"></div>`;
+ qb.querySelector("#qplay").onclick=()=>{const b=qb.querySelector("#qplay");if(cur===qi){stop();return}toggle(qi,()=>{b.textContent="▶ 播放題目"});b.textContent="■ 停止"};
+ qb.querySelector("#qnext").onclick=newQ;qb.querySelector("#qclose").onclick=()=>{stop();document.body.classList.remove("quizmode")};
+ qb.querySelectorAll(".opts .btn").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;qb.querySelectorAll(".opts .btn").forEach(x=>{if(+x.dataset.k===qi)x.classList.add("right")});if(k!==qi)b.classList.add("wrong");
+  qb.querySelector("#qres").innerHTML=(k===qi?"✅ 答對了！":"❌ 再聽聽看。")+` 正解是 <b>#${qi+1} ${P[qi].t}</b>，<a href="#c${qi}">跳到該卡片看格子譜</a>。`})}
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"){e.preventDefault();if(cur>=0)stop()}});
+</script></body></html>

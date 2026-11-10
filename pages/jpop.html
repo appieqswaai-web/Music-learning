@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>J-POP 常見節奏型・聽感練習</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#222;--mute:#777;--acc:#e64980;--acc2:#1971c2;--line:#e2e0da}
+@media (prefers-color-scheme:dark){:root{--bg:#18181b;--card:#232327;--ink:#eee;--mute:#999;--line:#38383d}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang TC","Noto Sans TC","Hiragino Sans","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{padding:20px 16px 8px;max-width:920px;margin:auto}h1{font-size:1.4rem;margin:0 0 4px}header p{margin:4px 0;color:var(--mute);font-size:.92rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 16px}
+.bar .in{max-width:920px;margin:auto;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.92rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--card);color:var(--ink);padding:6px 10px;cursor:pointer;font:inherit}.seg button.on{background:var(--acc2);color:#fff}
+input[type=range]{width:120px;vertical-align:middle}label{cursor:pointer}
+main{max-width:920px;margin:auto;padding:8px 16px 40px}
+.grp{margin:26px 0 4px;padding-left:10px;border-left:5px solid var(--acc)}.grp h2{margin:0;font-size:1.2rem}.grp p{margin:2px 0;color:var(--mute);font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+.card.playing{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 30%,transparent)}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.num{font-weight:700;color:var(--acc);min-width:2.2em}
+.title{font-weight:700;font-size:1.05rem}.title.hid{color:var(--mute);font-weight:400;font-style:italic}
+.tag{font-size:.78rem;color:var(--mute);border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.btn.play{background:var(--acc);border-color:var(--acc);color:#fff;min-width:84px}.spacer{flex:1}
+.lyr{margin-top:10px;font-size:1.25rem;letter-spacing:.06em;line-height:2.1}.lyr span{padding:0 2px;border-radius:4px;display:inline-block;text-align:center}.lyr span small{display:block;font-size:.62rem;color:var(--mute);line-height:1;letter-spacing:0}
+.lyr span.sing{background:var(--acc);color:#fff}.lyr span.sing small{color:#fff}.lyr .sep{color:var(--mute);margin:0 .4em}.nolyr .lyr{display:none}
+.ans{display:none;margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}.card.rev .ans{display:block}
+.gw{overflow-x:auto}.grid{display:grid;gap:2px;margin:4px 0}.cell{height:28px;border-radius:3px;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.cell.beat{box-shadow:inset 2px 0 0 color-mix(in srgb,var(--ink) 35%,transparent)}.cell.barstart{box-shadow:inset 3px 0 0 var(--acc2)}
+.cell.on{background:var(--acc)}.vgrid .cell.on{color:#fff;font-size:.68rem;display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden}.cell.hold{background:color-mix(in srgb,var(--acc) 40%,transparent)}
+.cell.now{outline:2px solid var(--acc2);outline-offset:-2px}
+.lbl{display:grid;gap:2px;font-size:.62rem;color:var(--mute);text-align:center}
+.drow .cell{height:11px}.drow .cell.on{background:var(--acc2)}.drow .cell.on2{background:color-mix(in srgb,var(--acc2) 45%,transparent)}
+.rowname{font-size:.74rem;color:var(--mute);margin-top:6px}
+.count{font-family:ui-monospace,Menlo,monospace;background:color-mix(in srgb,var(--ink) 6%,transparent);padding:6px 8px;border-radius:6px;font-size:.84rem;overflow-x:auto;white-space:pre}.count b{color:var(--acc)}
+.ans p{margin:8px 0}.ans .k{color:var(--acc2);font-weight:700}
+#quizbox{display:none;background:var(--card);border:2px solid var(--acc2);border-radius:12px;padding:14px 16px;margin:14px 0}.quizmode #quizbox{display:block}
+#quizbox .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}#quizbox .right{background:#2f9e44;color:#fff;border-color:#2f9e44}#quizbox .wrong{background:#e03131;color:#fff;border-color:#e03131}
+footer{max-width:920px;margin:auto;padding:0 16px 40px;color:var(--mute);font-size:.86rem}
+</style></head><body>
+<header><h1>J-POP 常見節奏型・聽感練習</h1><p>歌詞用原創日文，假名下方有羅馬拼音。日文「一個假名＝一拍」，所以特別適合練節奏。分成四組：日文咬字、句子進場位置、副歌招式、曲風律動。</p>
+<p>人聲為母音合成（機器聲），歌詞為原創。每種節奏 2 小節一循環，有自己的建議速度，可用「速度倍率」整體放慢。整理日期：2026-11-10 ・ 分類：音樂分析 / 節奏感訓練</p></header>
+<div class="bar"><div class="in">
+ <span class="seg" id="mix"><button data-m="both" class="on">人聲＋鼓</button><button data-m="voc">只人聲</button><button data-m="drum">只鼓</button></span>
+ <span>速度倍率 <input type="range" id="spd" min="50" max="120" value="100" step="5"> <b id="spdv">100%</b></span>
+ <label><input type="checkbox" id="click"> 節拍器</label>
+ <label><input type="checkbox" id="countin" checked> 先數 1 小節</label>
+ <label><input type="checkbox" id="loop" checked> 循環</label>
+ <label><input type="checkbox" id="showly" checked> 顯示歌詞</label>
+ <label><input type="checkbox" id="hide"> 盲聽</label>
+ <button class="btn" id="quizbtn">🎲 隨機考我</button>
+</div></div>
+<main id="main"><div id="quizbox"></div></main>
+<footer><p>練習建議：先只看羅馬拼音、用「答」一個假名拍一下；碰到 っ 就停一格、碰到 ー 就拉長。熟了以後再跟著唱。</p><p>格子圖例：橘＝人聲起音（格內是字），淺橘＝延長，藍＝鼓；藍粗線＝小節開頭，灰線＝每一拍。</p></footer>
+<script>
+const GROUPS={"mora": {"name": "日文咬字：モーラ（拍）", "desc": "日文一個假名＝一拍，促音「っ」是一拍的停頓，長音「ー」是一拍的延長。J-POP 節奏感的根源就在這裡。"}, "entry": {"name": "句子從哪裡進來", "desc": "J-POP 很少從第 1 拍正正地開始唱，弱起與裏拍（反拍）進場讓旋律有推進感。"}, "chorus": {"name": "副歌與動畫歌的招式", "desc": "搶拍、3-3-2 切分、キメ（樂團齊奏重音）是動畫主題曲和 J-Rock 副歌最常見的武器。"}, "groove": {"name": "曲風律動", "desc": "VOCALOID 系的高速 16 分，以及昭和歌謠、City Pop 的「跳ね」（16 分搖擺）。"}};
+const DR={"jrock": {"name": "J-Rock 8 Beat", "sub": 4, "k": [0, 6, 8], "s": [4, 12], "h": [0, 2, 4, 6, 8, 10, 12, 14]}, "yotsu": {"name": "四つ打ち（四四拍舞曲）", "sub": 4, "k": [0, 4, 8, 12], "s": [4, 12], "c": [4, 12], "h": [0, 1, 3, 4, 5, 7, 8, 9, 11, 12, 13, 15], "o": [2, 6, 10, 14]}, "fast16": {"name": "高速 16 Beat", "sub": 4, "k": [0, 3, 6, 8, 11], "s": [4, 12], "h": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, "hane": {"name": "跳ね（16 分搖擺）", "sub": 6, "k": [0, 9, 12], "s": [6, 18], "h": [0, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 18, 20, 21, 23]}, "kime": {"name": "キメ（全團齊奏）", "sub": 4, "k": [0, 3, 6], "s": [0, 3, 6], "o": [0, 3, 6], "h": [8, 10, 12, 14]}};
+const P=[{"g": "mora", "t": "一假名一音・八分連續", "jp": 1, "dr": "jrock", "sub": 4, "bpm": 140, "v": "x-x-x-x-x-x-x-x-|x-x-x-x-x-x-x---", "ly": ["き", "み", "の", "こ", "え", "が", "す", "る", "よ", "ぞ", "ら", "の", "む", "こ", "う"], "mel": [0, 0, 2, 2, 4, 4, 2, 2, 4, 4, 5, 4, 2, 0, 0], "ex": "每個假名佔一個八分音符，句子像一串均勻的珠子。這就是為什麼 J-POP 主歌常常聽起來「字很多但很整齊」。", "how": "跟 Hi-hat 完全同步，每個假名都對到一下 Hi-hat。", "ref": "YOASOBI、Aimer 的主歌段", "rm": ["ki", "mi", "no", "ko", "e", "ga", "su", "ru", "yo", "zo", "ra", "no", "mu", "ko", "u"], "vw": ["i", "i", "o", "o", "e", "a", "u", "u", "o", "o", "a", "o", "u", "o", "u"], "b1": 8}, {"g": "mora", "t": "促音「っ」・一拍的煞車", "jp": 1, "dr": "jrock", "sub": 4, "bpm": 130, "v": "x-x-.-x-x-x-.-x-|x-.-x-x-.-x-----", "ly": ["か", "えっ", "て", "き", "たっ", "て", "ちょっ", "と", "まっ", "て"], "mel": [2, 4, 4, 2, 4, 2, 4, 2, 0, 0], "ex": "「っ」不發聲，但要佔一拍，所以在八分音符串裡會出現一個小空格。這種「頓一下」讓日文歌詞天生就有切分感。", "how": "っ 的位置聽得到 Hi-hat／小鼓單獨出現。", "ref": "Vaundy〈怪獣の花唄〉、Official髭男dism 的主歌", "rm": ["ka", "e'", "te", "ki", "ta'", "te", "cho'", "to", "ma'", "te"], "vw": ["a", "e", "e", "i", "a", "e", "o", "o", "a", "e"], "b1": 6}, {"g": "mora", "t": "長音「ー」・拉長收尾", "jp": 1, "dr": "jrock", "sub": 4, "bpm": 120, "v": "x-x-x-x-x-------|x-x-x-x-x-------", "ly": ["あ", "い", "し", "て", "るー", "わ", "す", "れ", "な", "いー"], "mel": [4, 4, 5, 4, 2, 4, 4, 5, 7, 4], "ex": "四個短音＋一個拉長的音（ー），句尾長音是 J-POP 副歌最常見的收法，給聽眾一個喘息和「餘韻」。", "how": "長音拉滿兩拍半，鼓繼續走，下一句在小節頭進來。", "ref": "多數 J-POP 抒情副歌", "rm": ["a", "i", "shi", "te", "ru-", "wa", "su", "re", "na", "i-"], "vw": ["a", "i", "i", "e", "u", "a", "u", "e", "a", "i"], "b1": 5}, {"g": "entry", "t": "弱起・句頭搶先", "jp": 1, "dr": "jrock", "sub": 4, "bpm": 130, "v": "..........x-x-x-|x---x-x-x-------", "ly": ["ね", "え", "き", "み", "が", "す", "き"], "mel": [-1, 0, 2, 4, 2, 4, 2], "ex": "「ねえき」在上一小節尾巴就先唱，讓「み」這個重音落在下一小節第 1 拍。幾乎所有 J-POP 副歌的第一句都這樣進場。", "how": "人聲先出現，踢鼓在「み」那一刻才重重落下。", "ref": "米津玄師、あいみょん 的副歌開頭", "rm": ["ne", "e", "ki", "mi", "ga", "su", "ki"], "vw": ["e", "e", "i", "i", "a", "u", "i"], "b1": 3}, {"g": "entry", "t": "裏拍（反拍）進場・四つ打ち", "jp": 1, "dr": "yotsu", "sub": 4, "bpm": 126, "v": "..x...x...x...x-|..x-x-x-x-------", "ly": ["お", "ど", "れ", "よ", "あ", "さ", "ま", "で"], "mel": [4, 4, 4, 5, 4, 2, 0, 2], "ex": "人聲全部放在「&」的位置，正好跟開鈸（チッ）重疊，和四四拍踢鼓錯開。這是日系舞曲、Perfume 風格常見的律動。", "how": "踢鼓在拍點、人聲在拍與拍之間，一前一後。", "ref": "Perfume、中田ヤスタカ 系作品", "rm": ["o", "do", "re", "yo", "a", "sa", "ma", "de"], "vw": ["o", "o", "e", "o", "a", "a", "a", "e"], "b1": 4}, {"g": "chorus", "t": "搶拍連打（サビ前的衝刺）", "jp": 1, "dr": "jrock", "sub": 4, "bpm": 150, "v": "x-x-x--x--x-x--x|--x-x-x-x-------", "ly": ["は", "し", "り", "だ", "せ", "よ", "い", "ま", "そ", "ら", "へ"], "mel": [0, 2, 4, 4, 5, 4, 7, 7, 5, 4, 4], "ex": "好幾個字提早半拍或一格出現（落在 & 或 a），最後一個字更搶在小節線前，聽起來一直往前撲。動畫主題曲衝刺段的招牌。", "how": "第 4 拍的「a」就唱出「い」，延長過小節線。", "ref": "LiSA、UVERworld 的副歌", "rm": ["ha", "shi", "ri", "da", "se", "yo", "i", "ma", "so", "ra", "he"], "vw": ["a", "i", "i", "a", "e", "o", "i", "a", "o", "a", "e"], "b1": 7}, {"g": "chorus", "t": "3-3-2 アニソン勾子", "jp": 1, "dr": "jrock", "sub": 4, "bpm": 170, "v": "x--x--x-x--x--x-|x--x--x-x-------", "ly": ["ゆ", "め", "を", "つ", "か", "め", "い", "ま", "こ", "そ"], "mel": [4, 4, 4, 5, 4, 2, 4, 5, 7, 7], "ex": "一小節切成 3＋3＋2，在超快的 8 Beat 上製造「切」的感覺。熱血動畫歌超愛用。", "how": "人聲重音故意避開小鼓的第 2、4 拍。", "ref": "ONE OK ROCK、動畫 OP 主題曲", "rm": ["yu", "me", "wo", "tsu", "ka", "me", "i", "ma", "ko", "so"], "vw": ["u", "e", "o", "u", "a", "e", "i", "a", "o", "o"], "b1": 6}, {"g": "chorus", "t": "キメ・全團齊奏重音", "jp": 1, "dr": "kime", "sub": 4, "bpm": 150, "v": "x--x--x-......x-|x--x--x---------", "ly": ["い", "ま", "だ", "よ", "い", "く", "ぞ"], "mel": [4, 4, 7, 5, 7, 7, 9], "ex": "人聲和整個樂團在同一個點一起「打」下去（3-3-2 位置），然後突然停住。J-Rock 與動畫歌在副歌前後最有爆發力的瞬間。", "how": "人聲和鼓、鈸在同一格同時出現，中間全部靜音。", "ref": "King Gnu、BUMP OF CHICKEN、各種動畫 OP", "rm": ["i", "ma", "da", "yo", "i", "ku", "zo"], "vw": ["i", "a", "a", "o", "i", "u", "o"], "b1": 4}, {"g": "groove", "t": "VOCALOID 系・高速 16 分", "jp": 1, "dr": "fast16", "sub": 4, "bpm": 128, "v": "xxxxxxxx.xxxxxxx|xxxxxxxxxxxx----", "ly": ["こ", "こ", "ろ", "の", "お", "く", "で", "な", "に", "か", "が", "く", "ず", "れ", "て", "も", "う", "も", "ど", "れ", "な", "い", "き", "が", "し", "て", "る"], "mel": [0, 0, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 4, 4, 2, 2, 2, 4, 4, 5, 5, 7, 7, 5, 4, 2, 0], "ex": "每格一個假名，一口氣塞滿。原本是因為 VOCALOID 不用換氣才能這樣寫，後來 YOASOBI 等人聲歌手也這樣唱，成為現代 J-POP 的特色。", "how": "中間只空一格換氣，其餘全部跟 16 分 Hi-hat 一對一。", "ref": "YOASOBI〈夜に駆ける〉、ボカロ曲", "rm": ["ko", "ko", "ro", "no", "o", "ku", "de", "na", "ni", "ka", "ga", "ku", "zu", "re", "te", "mo", "u", "mo", "do", "re", "na", "i", "ki", "ga", "shi", "te", "ru"], "vw": ["o", "o", "o", "o", "o", "u", "e", "a", "i", "a", "a", "u", "u", "e", "e", "o", "u", "o", "o", "e", "a", "i", "i", "a", "i", "e", "u"], "b1": 15}, {"g": "groove", "t": "跳ね・City Pop 搖擺", "jp": 1, "dr": "hane", "sub": 6, "bpm": 98, "v": "x-xx-xx-xx-xx-----x-xx-x|x-xx-xx-----x-----------", "ly": ["ま", "よ", "な", "か", "の", "ド", "ラ", "イ", "ブ", "き", "み", "を", "の", "せ", "て", "は", "し", "る", "よ"], "mel": [0, 2, 4, 4, 5, 4, 2, 4, 5, 7, 5, 4, 2, 4, 4, 2, 0, 0, 0], "ex": "十六分音符「長短長短」地跳著走（跳ね），比直直的十六分更圓、更有彈性。80 年代 City Pop 和昭和歌謠的靈魂。", "how": "Hi-hat 也是同樣的長短搖擺。", "ref": "山下達郎、竹內瑪莉亞〈Plastic Love〉", "rm": ["ma", "yo", "na", "ka", "no", "do", "ra", "i", "bu", "ki", "mi", "wo", "no", "se", "te", "ha", "shi", "ru", "yo"], "vw": ["a", "o", "a", "a", "o", "o", "a", "i", "u", "i", "i", "o", "o", "e", "e", "a", "i", "u", "o"], "b1": 13}];
+function posStr(n,arr){const a=Array(n).fill(".");(arr||[]).forEach(x=>{const p=Array.isArray(x)?x[0]:x;a[p]="x"});return a.join("")}
+for(const k in DR){const d=DR[k],n=d.sub*4;d.K=posStr(n,d.k);d.S=posStr(n,d.s);d.C=posStr(n,d.c);d.H=posStr(n,d.h);d.O=posStr(n,d.o);d.B={};(d.b||[]).forEach(x=>d.B[x[0]]=x)}
+function parse(str){const s=str.replace(/\|/g,"");const notes=[];for(let i=0;i<s.length;i++){if(s[i]==="x"){let j=i+1;while(j<s.length&&s[j]==="-")j++;notes.push({st:i,len:j-i})}}return {s,notes}}
+function defMel(n,rap){const out=[];const A=rap?[0,0,1,0,2,1,0,1]:[0,2,4,2,4,5,4,2,0,2,4,7,5,4,2];for(let i=0;i<n;i++)out.push(A[i%A.length]);out[n-1]=rap?-1:0;return out}
+P.forEach(p=>{const r=parse(p.v);p.s=r.s;p.notes=r.notes;p.steps=p.sub*8;p.drum=DR[p.dr];p.noteAt={};p.notes.forEach((n,k)=>p.noteAt[n.st]=k);p.mel=p.mel||defMel(p.notes.length,p.rap);
+ if(p.drum.sub!==p.sub||p.s.length!==p.steps||p.ly.length!==p.notes.length)console.error("資料不符",p.t,p.s.length,p.steps,p.ly.length,p.notes.length)});
+const main=document.getElementById("main");
+function labels(sub){const L=sub===4?["e","&","a"]:sub===3?["la","li"]:["","","&","",""];const a=[];for(let b=0;b<2;b++)for(let q=1;q<=4;q++){a.push(String(q));L.forEach(x=>a.push(x))}return a}
+function cls0(p,i){const c=["cell"];if(i%p.sub===0)c.push(i%(p.sub*4)===0?"barstart":"beat");return c}
+function gridHTML(p){const n=p.steps,lb=labels(p.sub),col=`grid-template-columns:repeat(${n},minmax(${p.sub===6?11:15}px,1fr))`;let v="",l="";
+ for(let i=0;i<n;i++){const c=p.s[i],cl=cls0(p,i);if(c==="x")cl.push("on");else if(c==="-")cl.push("hold");v+=`<div class="${cl.join(" ")}" data-i="${i}">${c==="x"?p.ly[p.noteAt[i]]:""}</div>`;l+=`<div>${i%p.sub===0?"<b>"+lb[i]+"</b>":lb[i]}</div>`}
+ const d=p.drum,row=(nm,a,b2)=>{let h="";for(let i=0;i<n;i++){const j=i%(p.sub*4),cl=cls0(p,i);if(a[j]==="x")cl.push("on");else if(b2&&b2[j]==="x")cl.push("on2");h+=`<div class="${cl.join(" ")}"></div>`}return `<div class="rowname">${nm}</div><div class="grid drow" style="${col}">${h}</div>`};
+ const bs=posStr(p.sub*4,(d.b||[]).map(x=>x[0]));
+ return `<div class="gw"><div class="rowname">人聲</div><div class="grid vgrid" style="${col}">${v}</div><div class="lbl" style="${col}">${l}</div>`+row("Hi-hat（淺色＝開鈸）",d.H,d.O)+row("小鼓（淺色＝拍手／邊擊）",d.S,d.C)+row(d.b?"踢鼓（淺色＝808 低音）":"踢鼓",d.K,bs)+`</div>`}
+function countText(p){const lb=labels(p.sub);let out="";for(let i=0;i<p.steps;i++){if(i===p.sub*4)out+="| ";const c=p.s[i],t=lb[i]||"○";if(p.sub===6&&c!=="x"&&!lb[i])continue;out+=(c==="x"?`<b>${t}</b>`:c==="-"?"~":"·")+" "}return out}
+function lyrHTML(p){return p.ly.map((ch,k)=>(k===p.b1?'<span class="sep">/</span>':'')+`<span data-n="${k}">${ch}${p.rm?`<small>${p.rm[k]}</small>`:""}</span>`).join("")}
+let lastG=null;
+P.forEach((p,i)=>{if(p.g!==lastG){lastG=p.g;const g=GROUPS[p.g];const h=document.createElement("div");h.className="grp";h.innerHTML=`<h2>${g.name}</h2><p>${g.desc}</p>`;main.appendChild(h)}
+ const c=document.createElement("div");c.className="card";c.id="c"+i;
+ c.innerHTML=`<div class="top"><span class="num">#${i+1}</span><span class="title" data-t="${p.t}">${p.t}</span><span class="tag ttag">${p.bpm} BPM</span><span class="spacer"></span><button class="btn play">▶ 播放</button><button class="btn rv">揭曉答案</button></div>
+ <div class="lyr">${lyrHTML(p)}</div>
+ <div class="ans"><p><span class="k">節奏型：</span>${p.t}　<span class="tag">流派：${GROUPS[p.g].name}</span> <span class="tag">鼓：${p.drum.name}</span></p>${gridHTML(p)}
+ <p class="rowname">數拍唸法（粗體＝人聲起音，~＝延長，·＝休止${p.sub===6?"，○＝三連音中間的點":""}）：</p><div class="count">${countText(p)}</div>
+ <p><span class="k">味道：</span>${p.ex}</p><p><span class="k">聽的重點：</span>${p.how}</p>${p.ref?`<p><span class="k">類似風格可以聽：</span>${p.ref}</p>`:""}</div>`;
+ c.querySelector(".play").onclick=()=>toggle(i);c.querySelector(".rv").onclick=e=>{c.classList.toggle("rev");e.target.textContent=c.classList.contains("rev")?"收起答案":"揭曉答案"};main.appendChild(c)});
+const $=id=>document.getElementById(id);
+$("hide").onchange=()=>{const h=$("hide").checked;document.querySelectorAll(".card .title").forEach(t=>{t.textContent=h?"（名稱已隱藏，先聽再猜）":t.dataset.t;t.classList.toggle("hid",h)})};
+$("showly").onchange=e=>document.body.classList.toggle("nolyr",!e.target.checked);
+let mix="both";document.querySelectorAll("#mix button").forEach(b=>b.onclick=()=>{mix=b.dataset.m;document.querySelectorAll("#mix button").forEach(x=>x.classList.toggle("on",x===b))});
+$("spd").oninput=()=>$("spdv").textContent=$("spd").value+"%";
+/* ---------- 音訊 ---------- */
+let ctx,master,noiseBuf;
+function initAudio(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.8;
+ const comp=ctx.createDynamicsCompressor();master.connect(comp);comp.connect(ctx.destination);
+ noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g);g.connect(master);o.start(t);o.stop(t+.4)}
+function noise(t,dur,type,freq,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+dur+.02)}
+function snare(t){noise(t,.18,"bandpass",1800,.5);const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=190;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g);g.connect(master);o.start(t);o.stop(t+.12)}
+function hat(t,acc){noise(t,.04,"highpass",8000,acc?.22:.13)}
+function clickS(t,hi){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=hi?1600:1100;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(g);g.connect(master);o.start(t);o.stop(t+.06)}
+const SCALE=[0,2,4,5,7,9,11];function deg2midi(d){const o=Math.floor(d/7),r=((d%7)+7)%7;return 64+o*12+SCALE[r]}
+const FORM={a:[[800,1],[1150,.5],[2900,.12]],e:[[480,1],[1700,.35],[2500,.12]],i:[[300,1],[2300,.3],[3000,.15]],o:[[460,1],[800,.6],[2800,.06]],u:[[330,1],[700,.35],[2500,.05]]};
+function voice(t,dur,deg,acc,vow,cons){const f=440*Math.pow(2,(deg2midi(deg)-69)/12);const end=t+Math.max(.07,dur*.92);
+ const o1=ctx.createOscillator(),o2=ctx.createOscillator();o1.type="sawtooth";o2.type="sawtooth";
+ o1.frequency.setValueAtTime(f*.97,t);o1.frequency.exponentialRampToValueAtTime(f,t+.05);o2.frequency.setValueAtTime(f*.97*1.004,t);o2.frequency.exponentialRampToValueAtTime(f*1.004,t+.05);
+ const vib=ctx.createOscillator(),vg=ctx.createGain();vib.frequency.value=5.2;vg.gain.setValueAtTime(0,t);if(dur>.3)vg.gain.linearRampToValueAtTime(f*.012,t+Math.min(dur*.6,.5));vib.connect(vg);vg.connect(o1.frequency);vg.connect(o2.frequency);
+ const src=ctx.createGain();src.gain.value=.5;o1.connect(src);o2.connect(src);
+ const out=ctx.createGain();const pk=(acc?1:.78)*({a:1.1,e:1.25,i:.52,o:1,u:.35}[vow]||1);out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(pk,t+.025);out.gain.setValueAtTime(pk*.85,Math.max(t+.03,end-.05));out.gain.linearRampToValueAtTime(0,end);
+ (FORM[vow]||FORM.a).forEach(([fr,amp])=>{const bp=ctx.createBiquadFilter();bp.type="bandpass";bp.frequency.value=fr;bp.Q.value=fr<1000?6:10;const g=ctx.createGain();g.gain.value=amp*1.6;src.connect(bp);bp.connect(g);g.connect(out)});
+ out.connect(master);
+ if(cons!==false)noise(t,.025,"bandpass",3500,acc?.12:.08);
+ [o1,o2,vib].forEach(o=>{o.start(t);o.stop(end+.05)})}
+
+/* ---------- 排程 ---------- */
+
+function bass808(t,dur,glide){const o=ctx.createOscillator(),g=ctx.createGain();const f=55;if(glide){o.frequency.setValueAtTime(f*1.5,t);o.frequency.exponentialRampToValueAtTime(f,t+.12)}else o.frequency.setValueAtTime(f,t);
+ const sh=ctx.createWaveShaper();const cv=new Float32Array(256);for(let i=0;i<256;i++){const x=i/128-1;cv[i]=Math.tanh(2.2*x)}sh.curve=cv;
+ g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.7,t+.01);g.gain.setValueAtTime(.6,Math.max(t+.02,t+dur-.05));g.gain.exponentialRampToValueAtTime(.001,t+dur+.05);o.connect(sh);sh.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.1)}
+function clap(t){[0,.012,.024].forEach(d=>noise(t+d,.09,"bandpass",1200,.35))}
+function ohat(t){noise(t,.22,"highpass",7000,.14)}
+let cur=-1,timer=null,nextT=0,step=0,inCount=0,visQ=[],raf=null,onEnd=null;
+function bpmOf(p){return p.bpm*$("spd").value/100}
+function toggle(i,cb){initAudio();ctx.resume();if(cur===i){stop();return}stop();cur=i;onEnd=cb||null;const p=P[i];
+ $("c"+i).classList.add("playing");setBtn(i,"■ 停止");step=0;inCount=$("countin").checked?4:0;nextT=ctx.currentTime+.08;timer=setInterval(sched,25);sched();raf=requestAnimationFrame(draw)}
+function setBtn(i,t){const b=document.querySelector("#c"+i+" .play");if(b)b.textContent=t}
+function stop(){if(cur<0)return;clearInterval(timer);cancelAnimationFrame(raf);$("c"+cur).classList.remove("playing");setBtn(cur,"▶ 播放");document.querySelectorAll(".cell.now,.lyr .sing").forEach(c=>c.classList.remove("now","sing"));const cb=onEnd;cur=-1;visQ=[];onEnd=null;if(cb)cb()}
+function sched(){const p=P[cur];while(nextT<ctx.currentTime+.12){const beat=60/bpmOf(p),sd=beat/p.sub;
+ if(inCount>0){clickS(nextT,inCount===4);inCount--;nextT+=beat;continue}
+ if(step>=p.steps){if($("loop").checked)step=0;else{const t=nextT;setTimeout(()=>{if(cur>=0&&P[cur]===p)stop()},(t-ctx.currentTime)*1000+200);nextT=1e9;return}}
+ const s=step,bs=s%(p.sub*4),d=p.drum;
+ if(mix!=="voc"){if(d.K[bs]==="x")kick(nextT);if(d.S[bs]==="x")snare(nextT);if(d.C[bs]==="x")clap(nextT);if(d.H[bs]==="x")hat(nextT,bs%p.sub===0);if(d.O[bs]==="x")ohat(nextT);const b=d.B[bs];if(b)bass808(nextT,b[1]*sd,!!b[2])}
+ if(mix!=="drum"&&p.noteAt[s]!==undefined){const j=p.noteAt[s],n=p.notes[j];let dur=n.len*sd;if(p.rap)dur=Math.min(dur,Math.max(sd*.9,.11));voice(nextT,dur,p.mel[j%p.mel.length],s%p.sub===0,p.vw[j],!p.cont||!p.cont[j])}
+ if($("click").checked&&s%p.sub===0)clickS(nextT,bs===0);
+ visQ.push({t:nextT,s});step++;nextT+=sd}}
+function draw(){if(cur<0)return;const now=ctx.currentTime;let s=-1;while(visQ.length&&visQ[0].t<=now)s=visQ.shift().s;
+ if(s>=0){const p=P[cur];document.querySelectorAll("#c"+cur+" .vgrid .cell").forEach(c=>c.classList.toggle("now",+c.dataset.i===s));let k=-1;for(const n of p.notes)if(s>=n.st&&s<n.st+n.len){k=p.noteAt[n.st];break}
+  document.querySelectorAll("#c"+cur+" .lyr span[data-n]").forEach(e=>e.classList.toggle("sing",+e.dataset.n===k))}raf=requestAnimationFrame(draw)}
+const qb=$("quizbox");let qi=-1;
+$("quizbtn").onclick=()=>{document.body.classList.add("quizmode");newQ();qb.scrollIntoView({behavior:"smooth"})};
+function newQ(){stop();let n;do{n=Math.floor(Math.random()*P.length)}while(n===qi&&P.length>1);qi=n;const o=new Set([n]);while(o.size<4)o.add(Math.floor(Math.random()*P.length));const arr=[...o].sort(()=>Math.random()-.5);
+ qb.innerHTML=`<b>🎲 盲聽測驗</b>：這是哪一種節奏型？<div style="margin-top:8px"><button class="btn play" id="qplay">▶ 播放題目</button> <button class="btn" id="qnext">換一題</button> <button class="btn" id="qclose">關閉</button></div><div class="opts">${arr.map(k=>`<button class="btn" data-k="${k}">${P[k].t}</button>`).join("")}</div><div id="qres" style="margin-top:8px"></div>`;
+ $("qplay").onclick=()=>{if(cur===qi){stop();return}toggle(qi,()=>{$("qplay")&&($("qplay").textContent="▶ 播放題目")});$("qplay").textContent="■ 停止"};
+ $("qnext").onclick=newQ;$("qclose").onclick=()=>{stop();document.body.classList.remove("quizmode")};
+ qb.querySelectorAll(".opts .btn").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;qb.querySelectorAll(".opts .btn").forEach(x=>{if(+x.dataset.k===qi)x.classList.add("right")});if(k!==qi)b.classList.add("wrong");
+  $("qres").innerHTML=(k===qi?"✅ 答對了！":"❌ 再聽聽看。")+` 正解是 <b>#${qi+1} ${P[qi].t}</b>（${GROUPS[P[qi].g].name}），<a href="#c${qi}">跳到該卡片</a>。`})}
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"){e.preventDefault();if(cur>=0)stop()}});
+</script></body></html>
