@@ -1,0 +1,46 @@
+name: Deploy J-pop page to S3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pages/jpop.html"
+      - ".github/workflows/deploy-jpop.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # GitHub OIDC -> AWS IAM role (no long-lived keys)
+  contents: read
+
+concurrency:
+  group: deploy-jpop
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-northeast-1' }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check config
+        run: |
+          if [ -z "$S3_BUCKET" ] || [ -z "${{ secrets.AWS_ROLE_ARN }}" ]; then
+            echo "::error::Set repo variable S3_BUCKET and secret AWS_ROLE_ARN (see infra/README.md)"; exit 1
+          fi
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload J-pop page as site index
+        run: |
+          aws s3 cp pages/jpop.html "s3://$S3_BUCKET/index.html" \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "max-age=60"
+
+      - name: Show site URL
+        run: echo "http://$S3_BUCKET.s3-website-$AWS_REGION.amazonaws.com/" >> "$GITHUB_STEP_SUMMARY"
