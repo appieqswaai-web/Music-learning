@@ -1,0 +1,57 @@
+name: Deploy rhythm page to S3
+
+# One branch per rhythm page. Pushing a branch deploys only that page to
+#   s3://$S3_BUCKET/<branch>/index.html
+# Branch -> page mapping is in the "Pick page" step.
+on:
+  push:
+    branches: [jpop, rnb, rap, pop, full-song]
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # GitHub OIDC -> AWS IAM role (no long-lived keys)
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-northeast-1' }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      HAS_ROLE: ${{ secrets.AWS_ROLE_ARN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pick page
+        id: page
+        run: |
+          case "${GITHUB_REF_NAME}" in
+            jpop)      f=pages/jpop.html ;;
+            rnb)       f=pages/rnb.html ;;
+            rap)       f=pages/rap.html ;;
+            pop)       f=pages/pop.html ;;
+            full-song) f=pages/full-song.html ;;
+            *) echo "::error::No page mapped for branch ${GITHUB_REF_NAME}"; exit 1 ;;
+          esac
+          echo "file=$f" >> "$GITHUB_OUTPUT"
+          if [ -z "$S3_BUCKET" ] || [ "$HAS_ROLE" != "true" ]; then
+            echo "::warning::AWS not configured yet (need secret AWS_ROLE_ARN, variable S3_BUCKET). Skipping deploy."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        if: steps.page.outputs.skip != 'true'
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload page
+        if: steps.page.outputs.skip != 'true'
+        run: |
+          aws s3 cp "${{ steps.page.outputs.file }}" "s3://$S3_BUCKET/${GITHUB_REF_NAME}/index.html" \
+            --content-type "text/html; charset=utf-8" --cache-control "max-age=60"
+          echo "http://$S3_BUCKET.s3-website-$AWS_REGION.amazonaws.com/${GITHUB_REF_NAME}/" >> "$GITHUB_STEP_SUMMARY"
