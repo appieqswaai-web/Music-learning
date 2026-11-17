@@ -29,7 +29,17 @@ jobs:
           pip list 2>/dev/null | grep -iE "torch|numpy|librosa|pyworld|lightning|pypinyin|g2pM"
       - name: Sing
         run: |
-          cd ds && PYTHONPATH=. python ../tools/diffsinger/gen.py ../diffsinger.wav
+          cd ds
+          pip install -q pycwt PyWavelets g2p_en || true
+          for i in $(seq 1 12); do
+            if PYTHONPATH=. python ../tools/diffsinger/gen.py ../diffsinger.wav 2>err.txt; then break; fi
+            tail -5 err.txt
+            m=$(grep -oP "No module named '\K[^'.]+" err.txt | head -1)
+            [ -z "$m" ] && { cat err.txt | tail -40; exit 1; }
+            case "$m" in skimage) m=scikit-image;; sklearn) m=scikit-learn;; yaml) m=pyyaml;; parselmouth) m=praat-parselmouth;; pretty_midi) m=pretty-midi;; cv2) m=opencv-python-headless;; esac
+            echo "installing $m"; pip install -q "$m"
+          done
+          test -f ../diffsinger.wav
           cd .. && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3 && ls -la assets
       - name: Commit audio
         run: |
