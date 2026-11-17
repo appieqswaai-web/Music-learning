@@ -7,8 +7,8 @@ h1{font-size:20px;margin:0 0 4px}p.s{color:#666;font-size:14px;margin:0 0 14px}
 .v.playing button{background:#555}.v b{display:block}.v span{font-size:13px;color:#666}
 .ctl{display:flex;gap:14px;flex-wrap:wrap;font-size:15px;margin:10px 0}.tag{font-size:11px;background:#e7f5ff;color:#1864ab;border-radius:4px;padding:1px 5px;margin-left:4px}</style></head><body>
 <h1>🎵 人聲節奏練習・聲音試聽</h1>
-<p class="s">同一段節奏（弱起＋切分＋16 分＋長音），用不同聲音播放。按 ▶ 聽，選你喜歡的告訴我編號。第 2、3 種第一次按會先下載音檔（約 1–2 MB）。</p>
-<div class="ctl"><label><input type="checkbox" id="drums" checked> 加鼓</label>
+<p class="s">新增：現代 808 鼓、和弦伴奏、殘響（可關掉比較）。同一段節奏（弱起＋切分＋16 分＋長音），用不同聲音播放。按 ▶ 聽，選你喜歡的告訴我編號。第 2、3 種第一次按會先下載音檔（約 1–2 MB）。</p>
+<div class="ctl"><label>鼓 <select id="drums"><option value="modern" selected>現代 808</option><option value="classic">原本的鼓</option><option value="">不要鼓</option></select></label><label><input type="checkbox" id="pad" checked> 和弦伴奏</label><label><input type="checkbox" id="rev" checked> 殘響</label>
 <label>速度 <input type="range" id="bpm" min="70" max="130" value="96"> <span id="bv">96</span></label></div>
 <div id="load" style="color:#d9480f;font-size:14px"></div><div id="list"></div>
 <script>
@@ -85,14 +85,38 @@ const VOICES=[
  ["3b","真人人聲「嗚～」（FluidR3 Voice Oohs）","真人錄的哼唱取樣，比較柔",sfv("voice_oohs"),"取樣",1],
  ["4","柔和哼唱（純合成）","像閉嘴哼「嗯～」，不用載入",hum],
  ["5","木琴（純合成）","短而清楚，節奏起點最明顯",marimba]];
+
+/* ---- 現代編曲：808 鼓、和弦、殘響 ---- */
+let revIn=null,dry=null;
+function bus(){if(revIn)return;const cv=ctx.createConvolver(),n=ctx.sampleRate*1.8,ir=ctx.createBuffer(2,n,ctx.sampleRate);
+ for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}
+ cv.buffer=ir;revIn=ctx.createGain();revIn.gain.value=.35;revIn.connect(cv);cv.connect(dry=master)}
+function k808(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(48,t+.08);
+ g.gain.setValueAtTime(1,t);g.gain.exponentialRampToValueAtTime(.001,t+.7);const sh=ctx.createWaveShaper(),c=new Float32Array(256);for(let i=0;i<256;i++){const x=i/128-1;c[i]=Math.tanh(2*x)}sh.curve=c;
+ o.connect(sh);sh.connect(g);g.connect(master);o.start(t);o.stop(t+.75)}
+function clap(t){[0,.011,.022].forEach((d,i)=>noise(t+d,i<2?.02:.16,"bandpass",1500,.45));if(revIn){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type="bandpass";f.frequency.value=1500;const g=ctx.createGain();g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);s.connect(f);f.connect(g);g.connect(revIn);s.start(t);s.stop(t+.15)}}
+function that(t,v){noise(t,.025,"highpass",9000,v)}
+function modernDrums(t0,s16){const kicks=[0,3,6,10,16,19,22,27,29];kicks.forEach(k=>k808(t0+k*s16));[4,12,20,28].forEach(k=>clap(t0+k*s16));
+ for(let k=0;k<32;k++){const t=t0+k*s16;if(k===14||k===30){for(let r=0;r<4;r++)that(t+r*s16/2,.08+.03*r)}else if(k%2==0||k%8==7)that(t,k%4==0?.16:.1)}}
+function padChord(t,dur,notes){notes.forEach(m=>{const f=440*Math.pow(2,(m-69)/12);[-9,9].forEach(dt=>{const o=ctx.createOscillator();o.type="sawtooth";o.frequency.value=f;o.detune.value=dt;
+ const lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=1400;const g=ctx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.035,t+.25);g.gain.setValueAtTime(.035,t+dur-.2);g.gain.linearRampToValueAtTime(0,t+dur);
+ o.connect(lp);lp.connect(g);g.connect(master);if(revIn)g.connect(revIn);o.start(t);o.stop(t+dur+.05)})})}
+function sub(t,dur,m){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=440*Math.pow(2,(m-69)/12);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.02);g.gain.setValueAtTime(.25,t+dur-.05);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02)}
 /* 節奏：[起始16分格, 長度(16分), 音階度, 重音, 母音] 兩小節 */
 const PAT=[[-2,2,2,0,"a"],[0,4,4,1,"o"],[4,2,4,0,"e"],[6,4,5,1,"a"],[10,2,4,0,"i"],[12,1,2,0,"a"],[13,1,1,0,"e"],[14,2,2,1,"o"],
  [16,3,0,1,"a"],[19,3,2,0,"e"],[22,2,4,1,"a"],[24,8,2,1,"o"]];
 let stopAt=0,playingEl=null;
 async function play(i,el){initAudio();if(ctx.state==="suspended")ctx.resume();if(VOICES[i][5]){try{await loadSamples()}catch(e){return}}
  const bpm=+document.getElementById("bpm").value,s16=60/bpm/4,t0=ctx.currentTime+.15+2*s16;const fn=VOICES[i][3];
- PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v));
- if(document.getElementById("drums").checked)for(let k=0;k<32;k++){const t=t0+k*s16;if(k%8==0)kick(t);if(k%8==4)snare(t);if(k%2==0)hat(t,k%4==0)}
+ if(document.getElementById("rev").checked){bus();const m0=master,vb=ctx.createGain();vb.connect(m0);vb.connect(revIn);master=vb;
+  try{PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v))}finally{master=m0}}
+ else PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v));
+ const useRev=document.getElementById("rev").checked;if(useRev)bus();const saveRev=revIn;if(!useRev)revIn=null;
+ const dm=document.getElementById("drums").value;
+ if(dm==="classic")for(let k=0;k<32;k++){const t=t0+k*s16;if(k%8==0)kick(t);if(k%8==4)snare(t);if(k%2==0)hat(t,k%4==0)}
+ if(dm==="modern")modernDrums(t0,s16);
+ if(document.getElementById("pad").checked){padChord(t0,16*s16,[56,59,64,68]);padChord(t0+16*s16,16*s16,[57,61,64,69]);sub(t0,16*s16,40);sub(t0+16*s16,16*s16,45)}
+ revIn=saveRev;
  document.querySelectorAll(".v").forEach(x=>x.classList.remove("playing"));el.classList.add("playing");
  setTimeout(()=>el.classList.remove("playing"),(32*s16+1)*1000)}
 const L=document.getElementById("list");VOICES.forEach((v,i)=>{const d=document.createElement("div");d.className="v";
