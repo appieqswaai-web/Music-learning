@@ -199,4 +199,4 @@ function newQ(){stop();let n;do{n=Math.floor(Math.random()*P.length)}while(n===q
  qb.querySelectorAll(".opts .btn").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;qb.querySelectorAll(".opts .btn").forEach(x=>{if(+x.dataset.k===qi)x.classList.add("right")});if(k!==qi)b.classList.add("wrong");
   qb.querySelector("#qres").innerHTML=(k===qi?"✅ 答對了！":"❌ 再聽聽看。")+` 正解是 <b>#${qi+1} ${P[qi].t}</b>，<a href="#c${qi}">跳到該卡片看格子譜</a>。`})}
 document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"){e.preventDefault();if(cur>=0)stop()}});
-</script></body></html>
+</script><script src="kit.js"></script></body></html>

@@ -38,4 +38,4 @@ PT=[
 ]
 build(open('template.html').read(),open('audio.js').read(),dict(title="J-POP 常見節奏型・聽感練習",acc="#e64980",groups=G,drums=D,patterns=PT,
  intro="<p>歌詞用原創日文，假名下方有羅馬拼音。日文「一個假名＝一拍」，所以特別適合練節奏。分成四組：日文咬字、句子進場位置、副歌招式、曲風律動。</p>",
- footer="<p>練習建議：先只看羅馬拼音、用「答」一個假名拍一下；碰到 っ 就停一格、碰到 ー 就拉長。熟了以後再跟著唱。</p>"),'../../pages/jpop.html')
+ extra='<script src="aivoice.js"></script>',footer="<p>練習建議：先只看羅馬拼音、用「答」一個假名拍一下；碰到 っ 就停一格、碰到 ー 就拉長。熟了以後再跟著唱。</p>"),'../../pages/jpop.html')

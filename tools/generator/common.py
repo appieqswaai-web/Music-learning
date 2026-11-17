@@ -53,5 +53,5 @@ def build(tpl,audio,cfg,out):
                 pos=x[0] if isinstance(x,list) else x
                 if pos>=n: print('drum pos out',k,r,pos)
     h=tpl.replace('__TITLE__',cfg['title']).replace('__INTRO__',cfg['intro']).replace('__FOOTER__',cfg['footer']).replace('__ACC__',cfg['acc'])
-    h=h.replace('__GROUPS__',json.dumps(cfg['groups'],ensure_ascii=False)).replace('__DRUMS__',json.dumps(cfg['drums'],ensure_ascii=False)).replace('__PATTERNS__',json.dumps(P,ensure_ascii=False)).replace('__AUDIO__',audio)
+    h=h.replace('__GROUPS__',json.dumps(cfg['groups'],ensure_ascii=False)).replace('__DRUMS__',json.dumps(cfg['drums'],ensure_ascii=False)).replace('__PATTERNS__',json.dumps(P,ensure_ascii=False)).replace('__AUDIO__',audio).replace('__EXTRA__',cfg.get('extra',''))
     open(out,'w').write(h)

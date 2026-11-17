@@ -46,8 +46,10 @@ jobs:
             echo "installing $m"; pip install -q "$m"
           done
           test -f ../diffsinger.wav
-          cd .. && (which ffmpeg || { sudo apt-get update -qq; sudo apt-get install -y -qq ffmpeg; } >/dev/null) && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3 && ls -la assets
+          PYTHONPATH=. python ../tools/diffsinger/gen_jpop.py ../tools/generator ../jp_out
+          cd .. && (which ffmpeg || { sudo apt-get update -qq; sudo apt-get install -y -qq ffmpeg; } >/dev/null) && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3
+          mkdir -p assets/jpop && for w in jp_out/*.wav; do ffmpeg -loglevel error -y -i "$w" -ac 1 -b:a 96k "assets/jpop/$(basename "$w" .wav).mp3"; done && cp jp_out/index.json assets/jpop/ && ls -la assets assets/jpop
       - name: Commit audio
         run: |
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/diffsinger_zh.mp3 && git commit -m "Add DiffSinger audition sample (generated in Actions)" && git push
+          git add assets && (git diff --cached --quiet || git commit -m "Update DiffSinger audio (generated in Actions)") && git push

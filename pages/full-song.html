@@ -206,4 +206,4 @@ function draw(){if(!playing)return;const now=ctx.currentTime;let e=null;while(vi
   document.querySelectorAll("#now .lyr span[data-n]").forEach(x=>x.classList.toggle("sing",+x.dataset.n===k))}
  raf=requestAnimationFrame(draw)}
 document.addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();playing?stop():start(0)}});
-</script></body></html>
+</script><script src="kit.js"></script></body></html>
