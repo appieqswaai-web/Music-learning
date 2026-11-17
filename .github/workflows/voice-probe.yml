@@ -1,0 +1,53 @@
+name: Voice probe (DiffSinger)
+on:
+  push:
+    branches: [claude/project-thread-pccwgv]
+    paths: [".github/workflows/voice-probe.yml", "tools/diffsinger/**"]
+permissions:
+  contents: write
+jobs:
+  sing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Get DiffSinger code and checkpoints
+        run: |
+          git clone -q --depth 1 https://github.com/MoonInTheRiver/DiffSinger ds
+          sed -n 1,200p ds/inference/svs/ds_e2e.py
+          cd ds/checkpoints
+          B=https://github.com/MoonInTheRiver/DiffSinger/releases/download/pretrain-model
+          get() { z=$1; [ -d "$z" ] && return; curl -sSL -o /tmp/$z.zip $B/$z.zip; mkdir -p "$z"; unzip -q -o /tmp/$z.zip -d "$z"; rm /tmp/$z.zip
+            [ -d "$z/$z" ] && { mv "$z/$z"/* "$z"/; rmdir "$z/$z"; }
+            for n in "$z"/*.zip; do [ -f "$n" ] || continue; m=$(basename "$n" .zip); mkdir -p "$m"; unzip -q -o "$n" -d "$m"; [ -d "$m/$m" ] && { mv "$m/$m"/* "$m"/; rmdir "$m/$m"; }; rm "$n"; done; }
+          for z in 0228_opencpop_ds100_rel 0109_hifigan_bigpopcs_hop128 0102_xiaoma_pe; do get $z; done
+          for d in */; do echo "== $d"; ls "$d" | grep -v generated | head; done
+      - name: Install deps
+        run: |
+          printf 'numpy<1.24\nnumba<0.57\nlibrosa==0.9.2\ntorch==1.13.1+cpu\n' > /tmp/constraints.txt
+          export PIP_CONSTRAINT=/tmp/constraints.txt
+          pip install -q torch==1.13.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install -q "numpy<1.24" "librosa==0.9.2" "numba<0.57" scipy pyyaml==5.4.1 tqdm matplotlib pandas einops
+          for p in pypinyin==0.39.0 g2pM==0.1.2.5 pretty-midi==0.2.9 "pyworld==0.3.4" praat-parselmouth "pytorch-lightning==0.7.1" tensorboardX pyloudnorm h5py jieba textgrid scikit-image scikit-learn webrtcvad resemblyzer; do pip install -q "$p" || echo "SKIP $p"; done
+          pip list 2>/dev/null | grep -iE "torch|numpy|librosa|pyworld|lightning|pypinyin|g2pM"
+      - name: Sing
+        run: |
+          export PIP_CONSTRAINT=/tmp/constraints.txt
+          cd ds
+          pip install -q pycwt PyWavelets g2p_en || true
+          for i in $(seq 1 12); do
+            if PYTHONPATH=. python ../tools/diffsinger/gen.py ../diffsinger.wav 2>err.txt; then break; fi
+            tail -5 err.txt
+            m=$(grep -oP "No module named '\K[^'.]+" err.txt | head -1)
+            [ -z "$m" ] && { cat err.txt | tail -40; exit 1; }
+            case "$m" in skimage) m=scikit-image;; sklearn) m=scikit-learn;; yaml) m=pyyaml;; parselmouth) m=praat-parselmouth;; pretty_midi) m=pretty-midi;; cv2) m=opencv-python-headless;; esac
+            echo "installing $m"; pip install -q "$m"
+          done
+          test -f ../diffsinger.wav
+          cd .. && (which ffmpeg || { sudo apt-get update -qq; sudo apt-get install -y -qq ffmpeg; } >/dev/null) && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3 && ls -la assets
+      - name: Commit audio
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/diffsinger_zh.mp3 && git commit -m "Add DiffSinger audition sample (generated in Actions)" && git push
