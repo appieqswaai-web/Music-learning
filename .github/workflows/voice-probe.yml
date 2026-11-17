@@ -46,7 +46,7 @@ jobs:
             echo "installing $m"; pip install -q "$m"
           done
           test -f ../diffsinger.wav
-          cd .. && (which ffmpeg || sudo apt-get install -y -qq ffmpeg >/dev/null) && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3 && ls -la assets
+          cd .. && (which ffmpeg || { sudo apt-get update -qq; sudo apt-get install -y -qq ffmpeg; } >/dev/null) && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3 && ls -la assets
       - name: Commit audio
         run: |
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
