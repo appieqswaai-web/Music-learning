@@ -1,0 +1,26 @@
+name: Voice probe (DiffSinger)
+on:
+  push:
+    branches: [claude/project-thread-pccwgv]
+    paths: [".github/workflows/voice-probe.yml", "tools/diffsinger/**"]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: List DiffSinger releases and files
+        run: |
+          for r in MoonInTheRiver/DiffSinger openvpi/DiffSinger openvpi/vocoders openvpi/SingingVocoders; do
+            echo "=== $r"; gh release list -R $r -L 15 || true
+            for t in $(gh release list -R $r -L 6 --json tagName -q '.[].tagName' 2>/dev/null); do
+              echo "--- $r $t"; gh release view $t -R $r --json assets -q '.assets[]|"\(.name) \(.size)"' || true; done
+          done
+          git clone -q --depth 1 https://github.com/MoonInTheRiver/DiffSinger ds
+          ls ds ds/inference/svs ds/docs 2>/dev/null
+          cat ds/requirements*.txt | head -60
+          grep -rl -i "opencpop" ds/docs | head; sed -n 1,200p ds/docs/README-SVS-opencpop-e2e.md 2>/dev/null || true
+          sed -n 1,80p ds/LICENSE
