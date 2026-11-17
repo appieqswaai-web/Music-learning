@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>節拍器校準</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#222;--mute:#777;--acc:#2f9e44;--line:#e2e0da;--early:#1c7ed6;--late:#e8590c}
+@media (prefers-color-scheme:dark){:root{--bg:#18181b;--card:#232327;--ink:#eee;--mute:#999;--line:#38383d}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);-webkit-user-select:none;user-select:none}
+main{max-width:640px;margin:0 auto;padding:14px}
+h1{font-size:1.2rem;margin:4px 0 6px}p.hint{color:var(--mute);font-size:.9rem;margin:0 0 12px;line-height:1.5}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+button,select{font:inherit;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+button.main{background:var(--acc);border-color:var(--acc);color:#fff;min-width:110px;font-weight:700}
+input[type=range]{flex:1;min-width:140px}
+#beats{display:flex;gap:8px;justify-content:center;margin:6px 0}
+#beats i{width:18px;height:18px;border-radius:50%;background:var(--line);transition:background .05s}
+#beats i.on{background:var(--acc)}
+#pad{height:min(38vh,260px);border-radius:20px;border:2px dashed var(--acc);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:var(--acc);touch-action:manipulation;cursor:pointer;background:color-mix(in srgb,var(--acc) 6%,var(--card))}
+#pad.hit{background:color-mix(in srgb,var(--acc) 22%,var(--card))}
+#last{font-size:2rem;font-weight:800;text-align:center;min-height:2.6rem;margin-top:8px}
+canvas{width:100%;height:90px;display:block}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat b{display:block;font-size:1.4rem}.stat span{color:var(--mute);font-size:.8rem}
+#saved{color:var(--mute);font-size:.9rem}
+</style></head><body><main>
+<h1>⏱️ 節拍器校準</h1>
+<p class="hint">按「開始」後跟著節拍器在下面的大框框裡點。網頁會算出你每一下比拍子早或晚多少毫秒。點 12 下以上，按「儲存校準」，之後的打拍子練習就會自動扣掉這個延遲。換成喇叭、有線耳機或藍牙耳機時，請各校準一次。</p>
+
+<div class="card">
+ <div class="row"><label>輸出 <select id="out"><option value="speaker">手機喇叭</option><option value="wired">有線耳機</option><option value="bt">藍牙耳機</option></select></label>
+  <label>每小節 <select id="meter"><option>4</option><option>3</option><option>2</option></select> 拍</label></div>
+ <div class="row"><span>速度</span><input type="range" id="bpm" min="40" max="200" value="90" step="1"><b id="bpmv">90</b> BPM</div>
+ <div class="row"><button class="main" id="go">▶ 開始</button><button id="reset">清除紀錄</button></div>
+ <div id="beats"></div>
+</div>
+
+<div id="pad">在這裡跟著拍子點</div>
+<div id="last"></div>
+
+<div class="card">
+ <canvas id="cv"></canvas>
+ <div class="stat"><div><b id="sOff">–</b><span>平均偏差（毫秒）</span></div><div><b id="sSd">–</b><span>穩定度（越小越穩）</span></div><div><b id="sN">0</b><span>有效次數</span></div></div>
+ <div class="row" style="justify-content:space-between;margin-top:10px"><button id="save" disabled>💾 儲存校準</button><span id="saved"></span></div>
+</div>
+<p class="hint">負數＝你比拍子早，正數＝比拍子晚。平均偏差主要是手機和耳機的延遲加上你的習慣，穩定度才是你打拍子穩不穩。</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let ctx=null,master=null,running=false,nextT=0,beatN=0,timer=null,beatTimes=[],taps=[];
+const KEY="tapCalib";
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return{}}}
+function initAudio(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.9;master.connect(ctx.destination)}
+function click(t,acc){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=acc?1760:1100;g.gain.setValueAtTime(acc?.9:.55,t);g.gain.exponentialRampToValueAtTime(.001,t+.06);o.connect(g);g.connect(master);o.start(t);o.stop(t+.08)}
+function meter(){return +$("meter").value}
+function drawBeats(){const b=$("beats");b.innerHTML="";for(let i=0;i<meter();i++)b.appendChild(document.createElement("i"))}
+function sched(){const spb=60/+$("bpm").value;while(nextT<ctx.currentTime+.12){const k=beatN%meter();click(nextT,k===0);beatTimes.push(nextT);
+  const t=nextT,d=Math.max(0,(t-ctx.currentTime)*1000);setTimeout(()=>{const dots=$("beats").children;[...dots].forEach((x,j)=>x.classList.toggle("on",j===k))},d);
+  nextT+=spb;beatN++}if(beatTimes.length>64)beatTimes.splice(0,beatTimes.length-64)}
+function start(){initAudio();ctx.resume();running=true;nextT=ctx.currentTime+.15;beatN=0;beatTimes=[];timer=setInterval(sched,25);sched();$("go").textContent="■ 停止"}
+function stop(){running=false;clearInterval(timer);$("go").textContent="▶ 開始";[...$("beats").children].forEach(x=>x.classList.remove("on"))}
+$("go").onclick=()=>running?stop():start();
+$("bpm").oninput=()=>{$("bpmv").textContent=$("bpm").value};
+$("meter").onchange=drawBeats;
+$("reset").onclick=()=>{taps=[];render()};
+$("out").onchange=()=>{taps=[];render()};
+function tap(e){if(e.cancelable)e.preventDefault();if(!running||!ctx)return;
+ const lag=Math.max(0,(performance.now()-(e.timeStamp||performance.now()))/1000);const t=ctx.currentTime-lag;
+ let best=null;for(const b of beatTimes){if(best===null||Math.abs(t-b)<Math.abs(t-best))best=b}
+ if(best===null)return;const spb=60/+$("bpm").value,d=(t-best)*1000;
+ if(Math.abs(d)>spb*1000*.45)return;
+ taps.push(d);if(taps.length>40)taps.shift();
+ const pad=$("pad");pad.classList.add("hit");setTimeout(()=>pad.classList.remove("hit"),80);
+ const l=$("last");l.textContent=(d>0?"+":"")+Math.round(d)+" ms";l.style.color=Math.abs(d)<25?"var(--acc)":d<0?"var(--early)":"var(--late)";
+ render()}
+$("pad").addEventListener("pointerdown",tap);
+document.addEventListener("keydown",e=>{if(e.code==="Space"||e.code==="Enter"){tap(e)}});
+function used(){return taps.length>4?taps.slice(2):[]} /* 前兩下不算 */
+function median(a){const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2}
+function render(){const u=used(),n=u.length;$("sN").textContent=n;
+ if(n){const md=median(u),sd=Math.sqrt(u.reduce((s,x)=>s+(x-md)**2,0)/n);$("sOff").textContent=(md>0?"+":"")+Math.round(md);$("sSd").textContent="±"+Math.round(sd)}else{$("sOff").textContent="–";$("sSd").textContent="–"}
+ $("save").disabled=n<10;
+ const c=$("cv"),dpr=window.devicePixelRatio||1,W=c.clientWidth,H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;const g=c.getContext("2d");g.scale(dpr,dpr);
+ const cs=getComputedStyle(document.documentElement),R=150;
+ g.fillStyle=cs.getPropertyValue("--mute");g.font="11px sans-serif";g.textAlign="center";
+ [-150,-100,-50,0,50,100,150].forEach(v=>{const x=W/2+v/R*(W/2-10);g.fillRect(x,H-22,1,6);g.fillText(v===0?"0":v,x,H-4)});
+ g.fillStyle=cs.getPropertyValue("--acc");g.fillRect(W/2-1,4,2,H-30);
+ taps.forEach((d,i)=>{const x=W/2+Math.max(-R,Math.min(R,d))/R*(W/2-10),y=8+(i%8)*8;g.globalAlpha=.35+.65*(i+1)/taps.length;g.fillStyle=d<0?cs.getPropertyValue("--early"):cs.getPropertyValue("--late");g.beginPath();g.arc(x,y,4,0,7);g.fill()});
+ g.globalAlpha=1}
+$("save").onclick=()=>{const u=used();if(u.length<10)return;const all=load();all[$("out").value]={ms:Math.round(median(u)),at:new Date().toISOString().slice(0,10)};all.current=$("out").value;
+ try{localStorage.setItem(KEY,JSON.stringify(all))}catch(e){}showSaved()};
+function showSaved(){const all=load(),names={speaker:"手機喇叭",wired:"有線耳機",bt:"藍牙耳機"};
+ const s=Object.keys(names).filter(k=>all[k]).map(k=>names[k]+" "+(all[k].ms>0?"+":"")+all[k].ms+" ms").join("　");$("saved").textContent=s?"已存："+s:"";
+ if(all.current)$("out").value=all.current}
+drawBeats();showSaved();render();addEventListener("resize",render);
+</script>
+<script src="kit.js"></script>
+</body></html>
