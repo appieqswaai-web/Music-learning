@@ -6,21 +6,30 @@ on:
 permissions:
   contents: write
 jobs:
-  probe:
+  sing:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
-      - name: List DiffSinger releases and files
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Get DiffSinger code and checkpoints
         run: |
-          for r in MoonInTheRiver/DiffSinger openvpi/DiffSinger openvpi/vocoders openvpi/SingingVocoders; do
-            echo "=== $r"; gh release list -R $r -L 15 || true
-            for t in $(gh release list -R $r -L 6 --json tagName -q '.[].tagName' 2>/dev/null); do
-              echo "--- $r $t"; gh release view $t -R $r --json assets -q '.assets[]|"\(.name) \(.size)"' || true; done
-          done
           git clone -q --depth 1 https://github.com/MoonInTheRiver/DiffSinger ds
-          ls ds ds/inference/svs ds/docs 2>/dev/null
-          cat ds/requirements*.txt | head -60
-          grep -rl -i "opencpop" ds/docs | head; sed -n 1,200p ds/docs/README-SVS-opencpop-e2e.md 2>/dev/null || true
-          sed -n 1,80p ds/LICENSE
+          sed -n 1,200p ds/inference/svs/ds_e2e.py
+          cd ds/checkpoints
+          B=https://github.com/MoonInTheRiver/DiffSinger/releases/download/pretrain-model
+          for z in 0228_opencpop_ds100_rel 0109_hifigan_bigpopcs_hop128 0102_xiaoma_pe; do curl -sSL -o $z.zip $B/$z.zip && unzip -q $z.zip && rm $z.zip; done
+          find . -maxdepth 2 | head -40
+      - name: Install deps
+        run: |
+          pip install -q torch==1.13.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install -q "numpy<1.24" "librosa==0.9.2" "numba<0.57" scipy pyyaml==5.4.1 tqdm matplotlib pandas einops pypinyin==0.39.0 g2pM==0.1.2.5 pretty-midi==0.2.9 praat-parselmouth pyworld "pytorch-lightning==0.7.1" tensorboardX webrtcvad resemblyzer pyloudnorm h5py jieba textgrid scikit-image scikit-learn || true
+      - name: Sing
+        run: |
+          cd ds && PYTHONPATH=. python ../tools/diffsinger/gen.py ../diffsinger.wav
+          cd .. && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3 && ls -la assets
+      - name: Commit audio
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/diffsinger_zh.mp3 && git commit -m "Add DiffSinger audition sample (generated in Actions)" && git push
