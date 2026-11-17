@@ -1,4 +1,10 @@
 /* 鼓聲風格切換：覆寫頁面上的 kick/snare/hat/clap/ohat，所有練習頁共用 */
+/* iPhone：讓網頁聲音不受靜音鍵影響，並在每次點擊時喚醒音訊 */
+try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}
+(function(){function wake(){try{if(typeof initAudio==="function")initAudio();if(typeof ctx==="undefined"||!ctx)return;if(ctx.state!=="running")ctx.resume();
+ const s=ctx.createBufferSource();s.buffer=ctx.createBuffer(1,1,22050);s.connect(ctx.destination);s.start(0)}catch(e){}}
+ ["touchend","click"].forEach(ev=>document.addEventListener(ev,wake,true));
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&typeof ctx!=="undefined"&&ctx&&ctx.state!=="running")ctx.resume()})})();
 (function(){
 const ORIG={kick:window.kick,snare:window.snare,hat:window.hat,clap:window.clap,ohat:window.ohat};
 function nz(t,dur,type,freq,vol,q){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;if(q)f.Q.value=q;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+dur+.02)}
