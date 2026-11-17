@@ -119,13 +119,14 @@ function bpmOf(p){return p.bpm*$("spd").value/100}
 function toggle(i,cb){initAudio();ctx.resume();if(cur===i){stop();return}stop();cur=i;onEnd=cb||null;const p=P[i];
  $("c"+i).classList.add("playing");setBtn(i,"■ 停止");step=0;inCount=$("countin").checked?4:0;nextT=ctx.currentTime+.08;timer=setInterval(sched,25);sched();raf=requestAnimationFrame(draw)}
 function setBtn(i,t){const b=document.querySelector("#c"+i+" .play");if(b)b.textContent=t}
-function stop(){if(cur<0)return;clearInterval(timer);cancelAnimationFrame(raf);$("c"+cur).classList.remove("playing");setBtn(cur,"▶ 播放");document.querySelectorAll(".cell.now,.lyr .sing").forEach(c=>c.classList.remove("now","sing"));const cb=onEnd;cur=-1;visQ=[];onEnd=null;if(cb)cb()}
+function stop(){if(cur<0)return;if(window.AIV)AIV.stop();clearInterval(timer);cancelAnimationFrame(raf);$("c"+cur).classList.remove("playing");setBtn(cur,"▶ 播放");document.querySelectorAll(".cell.now,.lyr .sing").forEach(c=>c.classList.remove("now","sing"));const cb=onEnd;cur=-1;visQ=[];onEnd=null;if(cb)cb()}
 function sched(){const p=P[cur];while(nextT<ctx.currentTime+.12){const beat=60/bpmOf(p),sd=beat/p.sub;
  if(inCount>0){clickS(nextT,inCount===4);inCount--;nextT+=beat;continue}
  if(step>=p.steps){if($("loop").checked)step=0;else{const t=nextT;setTimeout(()=>{if(cur>=0&&P[cur]===p)stop()},(t-ctx.currentTime)*1000+200);nextT=1e9;return}}
  const s=step,bs=s%(p.sub*4),d=p.drum;
  if(mix!=="voc"){if(d.K[bs]==="x")kick(nextT);if(d.S[bs]==="x")snare(nextT);if(d.C[bs]==="x")clap(nextT);if(d.H[bs]==="x")hat(nextT,bs%p.sub===0);if(d.O[bs]==="x")ohat(nextT);const b=d.B[bs];if(b)bass808(nextT,b[1]*sd,!!b[2])}
- if(mix!=="drum"&&p.noteAt[s]!==undefined){const j=p.noteAt[s],n=p.notes[j];let dur=n.len*sd;if(p.rap)dur=Math.min(dur,Math.max(sd*.9,.11));voice(nextT,dur,p.mel[j%p.mel.length],s%p.sub===0,p.vw[j],!p.cont||!p.cont[j])}
+ if(s===0&&mix!=="drum"&&window.AIV)AIV.start(cur,nextT,$("spd").value/100);
+ if(mix!=="drum"&&p.noteAt[s]!==undefined&&!(window.AIV&&AIV.has(cur))){const j=p.noteAt[s],n=p.notes[j];let dur=n.len*sd;if(p.rap)dur=Math.min(dur,Math.max(sd*.9,.11));voice(nextT,dur,p.mel[j%p.mel.length],s%p.sub===0,p.vw[j],!p.cont||!p.cont[j])}
  if($("click").checked&&s%p.sub===0)clickS(nextT,bs===0);
  visQ.push({t:nextT,s});step++;nextT+=sd}}
 function draw(){if(cur<0)return;const now=ctx.currentTime;let s=-1;while(visQ.length&&visQ[0].t<=now)s=visQ.shift().s;
@@ -140,4 +141,5 @@ function newQ(){stop();let n;do{n=Math.floor(Math.random()*P.length)}while(n===q
  qb.querySelectorAll(".opts .btn").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;qb.querySelectorAll(".opts .btn").forEach(x=>{if(+x.dataset.k===qi)x.classList.add("right")});if(k!==qi)b.classList.add("wrong");
   $("qres").innerHTML=(k===qi?"✅ 答對了！":"❌ 再聽聽看。")+` 正解是 <b>#${qi+1} ${P[qi].t}</b>（${GROUPS[P[qi].g].name}），<a href="#c${qi}">跳到該卡片</a>。`})}
 document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"){e.preventDefault();if(cur>=0)stop()}});
-</script></body></html>
+</script>
+<script src="kit.js"></script><script src="aivoice.js"></script></body></html>
