@@ -8,8 +8,6 @@ permissions:
 jobs:
   sing:
     runs-on: ubuntu-latest
-    env:
-      PIP_CONSTRAINT: /tmp/constraints.txt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,12 +24,14 @@ jobs:
       - name: Install deps
         run: |
           printf 'numpy<1.24\nnumba<0.57\nlibrosa==0.9.2\ntorch==1.13.1+cpu\n' > /tmp/constraints.txt
+          export PIP_CONSTRAINT=/tmp/constraints.txt
           pip install -q torch==1.13.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
           pip install -q "numpy<1.24" "librosa==0.9.2" "numba<0.57" scipy pyyaml==5.4.1 tqdm matplotlib pandas einops
           for p in pypinyin==0.39.0 g2pM==0.1.2.5 pretty-midi==0.2.9 "pyworld==0.3.4" praat-parselmouth "pytorch-lightning==0.7.1" tensorboardX pyloudnorm h5py jieba textgrid scikit-image scikit-learn webrtcvad resemblyzer; do pip install -q "$p" || echo "SKIP $p"; done
           pip list 2>/dev/null | grep -iE "torch|numpy|librosa|pyworld|lightning|pypinyin|g2pM"
       - name: Sing
         run: |
+          export PIP_CONSTRAINT=/tmp/constraints.txt
           cd ds
           pip install -q pycwt PyWavelets g2p_en || true
           for i in $(seq 1 12); do
