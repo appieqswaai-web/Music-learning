@@ -2,7 +2,7 @@ name: Voice probe (DiffSinger)
 on:
   push:
     branches: [claude/project-thread-pccwgv]
-    paths: [".github/workflows/voice-probe.yml", "tools/diffsinger/**"]
+    paths: [".github/workflows/voice-probe.yml", "tools/diffsinger/**", "tools/generator/jpop.py"]
 permissions:
   contents: write
 jobs:
