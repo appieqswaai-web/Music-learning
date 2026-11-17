@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>節奏練習・聲音試聽</title>
+<style>body{font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:16px;background:#fafafa;color:#222}
+h1{font-size:20px;margin:0 0 4px}p.s{color:#666;font-size:14px;margin:0 0 14px}
+.v{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:8px 0}
+.v button{font-size:22px;width:52px;height:52px;border-radius:50%;border:0;background:#d9480f;color:#fff;flex:none}
+.v.playing button{background:#555}.v b{display:block}.v span{font-size:13px;color:#666}
+.ctl{display:flex;gap:14px;flex-wrap:wrap;font-size:15px;margin:10px 0}.tag{font-size:11px;background:#e7f5ff;color:#1864ab;border-radius:4px;padding:1px 5px;margin-left:4px}</style></head><body>
+<h1>🎵 人聲節奏練習・聲音試聽</h1>
+<p class="s">同一段節奏（弱起＋切分＋16 分＋長音），用不同聲音播放。按 ▶ 聽，選你喜歡的告訴我編號。第 2、3 種第一次按會先下載音檔（約 1–2 MB）。</p>
+<div class="ctl"><label><input type="checkbox" id="drums" checked> 加鼓</label>
+<label>速度 <input type="range" id="bpm" min="70" max="130" value="96"> <span id="bv">96</span></label></div>
+<div id="load" style="color:#d9480f;font-size:14px"></div><div id="list"></div>
+<script>
+/* ---------- 音訊 ---------- */
+let ctx,master,noiseBuf;
+function initAudio(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.8;
+ const comp=ctx.createDynamicsCompressor();master.connect(comp);comp.connect(ctx.destination);
+ noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g);g.connect(master);o.start(t);o.stop(t+.4)}
+function noise(t,dur,type,freq,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+dur+.02)}
+function snare(t){noise(t,.18,"bandpass",1800,.5);const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=190;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g);g.connect(master);o.start(t);o.stop(t+.12)}
+function hat(t,acc){noise(t,.04,"highpass",8000,acc?.22:.13)}
+function clickS(t,hi){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=hi?1600:1100;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(g);g.connect(master);o.start(t);o.stop(t+.06)}
+const SCALE=[0,2,4,5,7,9,11];function deg2midi(d){const o=Math.floor(d/7),r=((d%7)+7)%7;return 64+o*12+SCALE[r]}
+const FORM={a:[[800,1],[1150,.5],[2900,.12]],e:[[480,1],[1700,.35],[2500,.12]],i:[[300,1],[2300,.3],[3000,.15]],o:[[460,1],[800,.6],[2800,.06]],u:[[330,1],[700,.35],[2500,.05]]};
+function voice(t,dur,deg,acc,vow,cons){const f=440*Math.pow(2,(deg2midi(deg)-69)/12);const end=t+Math.max(.07,dur*.92);
+ const o1=ctx.createOscillator(),o2=ctx.createOscillator();o1.type="sawtooth";o2.type="sawtooth";
+ o1.frequency.setValueAtTime(f*.97,t);o1.frequency.exponentialRampToValueAtTime(f,t+.05);o2.frequency.setValueAtTime(f*.97*1.004,t);o2.frequency.exponentialRampToValueAtTime(f*1.004,t+.05);
+ const vib=ctx.createOscillator(),vg=ctx.createGain();vib.frequency.value=5.2;vg.gain.setValueAtTime(0,t);if(dur>.3)vg.gain.linearRampToValueAtTime(f*.012,t+Math.min(dur*.6,.5));vib.connect(vg);vg.connect(o1.frequency);vg.connect(o2.frequency);
+ const src=ctx.createGain();src.gain.value=.5;o1.connect(src);o2.connect(src);
+ const out=ctx.createGain();const pk=(acc?1:.78)*({a:1.1,e:1.25,i:.52,o:1,u:.35}[vow]||1);out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(pk,t+.025);out.gain.setValueAtTime(pk*.85,Math.max(t+.03,end-.05));out.gain.linearRampToValueAtTime(0,end);
+ (FORM[vow]||FORM.a).forEach(([fr,amp])=>{const bp=ctx.createBiquadFilter();bp.type="bandpass";bp.frequency.value=fr;bp.Q.value=fr<1000?6:10;const g=ctx.createGain();g.gain.value=amp*1.6;src.connect(bp);bp.connect(g);g.connect(out)});
+ out.connect(master);
+ if(cons!==false)noise(t,.025,"bandpass",3500,acc?.12:.08);
+ [o1,o2,vib].forEach(o=>{o.start(t);o.stop(end+.05)})}
+
+
+/* ---- 合成音色 ---- */
+function hz(deg){return 440*Math.pow(2,(deg2midi(deg)-69)/12)}
+function env(g,t,a,pk,end,rel){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+a);g.gain.setValueAtTime(pk*.9,Math.max(t+a,end-rel));g.gain.linearRampToValueAtTime(0,end)}
+function hum(t,dur,deg,acc){const f=hz(deg),end=t+Math.max(.1,dur*.95);const o=ctx.createOscillator(),o2=ctx.createOscillator();o.type="triangle";o2.type="sine";o.frequency.value=f;o2.frequency.value=f*2;
+ const vib=ctx.createOscillator(),vg=ctx.createGain();vib.frequency.value=5;vg.gain.setValueAtTime(0,t);if(dur>.3)vg.gain.linearRampToValueAtTime(f*.008,t+.4);vib.connect(vg);vg.connect(o.frequency);
+ const lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=1100;const m=ctx.createGain();m.gain.value=.15;o2.connect(m);
+ const g=ctx.createGain();env(g,t,.04,acc?.75:.55,end,.08);o.connect(lp);m.connect(lp);lp.connect(g);g.connect(master);[o,o2,vib].forEach(x=>{x.start(t);x.stop(end+.05)})}
+function marimba(t,dur,deg,acc){const f=hz(deg);[[1,.7,.9],[4,.2,.15],[10,.06,.05]].forEach(([m,v,d])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f*m;g.gain.setValueAtTime(v*(acc?1:.75),t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02)})}
+function epiano(t,dur,deg,acc){const f=hz(deg),end=t+Math.max(.15,dur*.95)+.3;const c=ctx.createOscillator(),mo=ctx.createOscillator(),mg=ctx.createGain(),g=ctx.createGain();
+ c.frequency.value=f;mo.frequency.value=f;mg.gain.setValueAtTime(f*1.5,t);mg.gain.exponentialRampToValueAtTime(f*.05,t+.6);mo.connect(mg);mg.connect(c.frequency);
+ g.gain.setValueAtTime(acc?.6:.45,t);g.gain.exponentialRampToValueAtTime(.001,end);c.connect(g);g.connect(master);[c,mo].forEach(x=>{x.start(t);x.stop(end+.02)})}
+function flute(t,dur,deg,acc){const f=hz(deg)*2,end=t+Math.max(.1,dur*.92);const o=ctx.createOscillator();o.type="sine";o.frequency.value=f;
+ const vib=ctx.createOscillator(),vg=ctx.createGain();vib.frequency.value=5.5;vg.gain.value=f*.006;vib.connect(vg);vg.connect(o.frequency);
+ const g=ctx.createGain();env(g,t,.05,acc?.5:.38,end,.06);o.connect(g);g.connect(master);noise(t,.06,"bandpass",f*1.5,.05);[o,vib].forEach(x=>{x.start(t);x.stop(end+.05)})}
+function pluck(t,dur,deg,acc){const f=hz(deg)/2,end=t+Math.min(1.2,dur+.4);const o=ctx.createOscillator();o.type="sawtooth";o.frequency.value=f;
+ const lp=ctx.createBiquadFilter();lp.type="lowpass";lp.Q.value=2;lp.frequency.setValueAtTime(3500,t);lp.frequency.exponentialRampToValueAtTime(300,t+.35);
+ const g=ctx.createGain();g.gain.setValueAtTime(acc?.55:.4,t);g.gain.exponentialRampToValueAtTime(.001,end);o.connect(lp);lp.connect(g);g.connect(master);o.start(t);o.stop(end+.02)}
+function choir(t,dur,deg,acc){const f=hz(deg),end=t+Math.max(.12,dur*.95);const out=ctx.createGain();env(out,t,.06,acc?.5:.38,end,.1);
+ const lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=900;lp.connect(out);out.connect(master);const os=[];
+ [-7,0,6].forEach(c=>{const o=ctx.createOscillator();o.type="sawtooth";o.frequency.value=f;o.detune.value=c;const g=ctx.createGain();g.gain.value=.25;o.connect(g);g.connect(lp);os.push(o)});
+ os.forEach(o=>{o.start(t);o.stop(end+.05)})}
+
+/* ---- 取樣聲音（音檔由 GitHub Actions 產生／下載，見 tools/voices） ---- */
+const BUF={piper:{},sf:{}};let F0={},loadP=null;
+const NN=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];function nname(m){return NN[m%12]+(Math.floor(m/12)-1)}
+function b64buf(u){const s=atob(u.split(",")[1]),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a.buffer}
+function dec(ab){return new Promise((ok,no)=>ctx.decodeAudioData(ab,ok,no))}
+function addScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>no(src);document.head.appendChild(s)})}
+window.MIDI={Soundfont:{}};
+function loadSamples(){if(loadP)return loadP;initAudio();const st=document.getElementById("load");st.textContent="載入音檔中…";
+ const need=[...new Set(PAT.map(p=>deg2midi(p[2])))];
+ loadP=(async()=>{F0=await (await fetch("voices/meta.json")).json();
+  await Promise.all(Object.keys(F0).map(async v=>{BUF.piper[v]=await dec(await (await fetch("voices/piper_"+v+".wav")).arrayBuffer())}));
+  for(const n of ["choir_aahs","voice_oohs"]){await addScript("voices/"+n+".js");BUF.sf[n]={};
+   await Promise.all(need.map(async m=>{BUF.sf[n][m]=await dec(b64buf(MIDI.Soundfont[n][nname(m)]))}))}
+  st.textContent="";})().catch(e=>{st.textContent="音檔載入失敗："+e;loadP=null;throw e});return loadP}
+function playBuf(buf,t,dur,rate,vol,rel){const s=ctx.createBufferSource();s.buffer=buf;s.playbackRate.value=rate;const g=ctx.createGain();
+ const end=t+Math.max(.08,dur*.95);g.gain.setValueAtTime(vol,t);g.gain.setValueAtTime(vol,Math.max(t,end-rel));g.gain.linearRampToValueAtTime(0,end);
+ s.connect(g);g.connect(master);s.start(t);s.stop(end+.02)}
+function piper(t,dur,deg,acc,vow){const v=BUF.piper[vow]?vow:"a";playBuf(BUF.piper[v],t,dur,hz(deg)/2/F0[v],acc?1:.8,.04)}
+function sfv(n){return (t,dur,deg,acc)=>playBuf(BUF.sf[n][deg2midi(deg)],t,dur,1,acc?1.1:.85,.08)}
+function cur(t,dur,deg,acc,vow){voice(t,dur,deg,acc,vow||"a")}
+const VOICES=[
+ ["1","目前的聲音（母音合成）","現在網站用的，當作對照",cur],
+ ["2","開源 TTS 人聲（Piper）","真人錄音訓練的語音合成，唱 la / lay / lee / low / loo",piper,"取樣",1],
+ ["3a","真人合唱「啊～」（FluidR3 Choir Aahs）","真人錄的合唱取樣，按音高播放",sfv("choir_aahs"),"取樣",1],
+ ["3b","真人人聲「嗚～」（FluidR3 Voice Oohs）","真人錄的哼唱取樣，比較柔",sfv("voice_oohs"),"取樣",1],
+ ["4","柔和哼唱（純合成）","像閉嘴哼「嗯～」，不用載入",hum],
+ ["5","木琴（純合成）","短而清楚，節奏起點最明顯",marimba]];
+/* 節奏：[起始16分格, 長度(16分), 音階度, 重音, 母音] 兩小節 */
+const PAT=[[-2,2,2,0,"a"],[0,4,4,1,"o"],[4,2,4,0,"e"],[6,4,5,1,"a"],[10,2,4,0,"i"],[12,1,2,0,"a"],[13,1,1,0,"e"],[14,2,2,1,"o"],
+ [16,3,0,1,"a"],[19,3,2,0,"e"],[22,2,4,1,"a"],[24,8,2,1,"o"]];
+let stopAt=0,playingEl=null;
+async function play(i,el){initAudio();if(ctx.state==="suspended")ctx.resume();if(VOICES[i][5]){try{await loadSamples()}catch(e){return}}
+ const bpm=+document.getElementById("bpm").value,s16=60/bpm/4,t0=ctx.currentTime+.15+2*s16;const fn=VOICES[i][3];
+ PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v));
+ if(document.getElementById("drums").checked)for(let k=0;k<32;k++){const t=t0+k*s16;if(k%8==0)kick(t);if(k%8==4)snare(t);if(k%2==0)hat(t,k%4==0)}
+ document.querySelectorAll(".v").forEach(x=>x.classList.remove("playing"));el.classList.add("playing");
+ setTimeout(()=>el.classList.remove("playing"),(32*s16+1)*1000)}
+const L=document.getElementById("list");VOICES.forEach((v,i)=>{const d=document.createElement("div");d.className="v";
+ d.innerHTML='<button aria-label="播放">▶</button><div><b>'+v[0]+'. '+v[1]+(v[4]?'<span class="tag">'+v[4]+'</span>':'')+'</b><span>'+v[2]+'</span></div>';
+ d.querySelector("button").onclick=()=>play(i,d);L.appendChild(d)});
+document.getElementById("bpm").oninput=e=>document.getElementById("bv").textContent=e.target.value;
+</script>
+<p class="s" style="margin-top:18px">來源與授權：2 = <a href="https://github.com/rhasspy/piper">Piper</a> 語音 en_US-ljspeech（LJ Speech 資料集，公眾領域；模型說明見 <a href="voices/PIPER_MODEL_CARD.txt">model card</a>）。3a/3b = FluidR3_GM 音色庫（Frank Wen 製作），經 <a href="https://github.com/gleitz/midi-js-soundfonts">gleitz/midi-js-soundfonts</a> 轉檔，授權見 <a href="voices/SOUNDFONT_README.txt">說明</a>。<a href="./">← 回練習頁</a></p>
+</body></html>
