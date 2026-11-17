@@ -69,6 +69,7 @@ function loadSamples(){if(loadP)return loadP;initAudio();const st=document.getEl
  const need=[...new Set(PAT.map(p=>deg2midi(p[2])))];
  loadP=(async()=>{F0=await (await fetch("voices/meta.json")).json();
   await Promise.all(Object.keys(F0).map(async v=>{BUF.piper[v]=await dec(await (await fetch("voices/piper_"+v+".wav")).arrayBuffer())}));
+  try{BUF.ds=await dec(await (await fetch("assets/diffsinger_zh.mp3")).arrayBuffer())}catch(e){BUF.ds=null}
   for(const n of ["choir_aahs","voice_oohs"]){await addScript("voices/"+n+".js");BUF.sf[n]={};
    await Promise.all(need.map(async m=>{BUF.sf[n][m]=await dec(b64buf(MIDI.Soundfont[n][nname(m)]))}))}
   st.textContent="";})().catch(e=>{st.textContent="音檔載入失敗："+e;loadP=null;throw e});return loadP}
@@ -76,9 +77,11 @@ function playBuf(buf,t,dur,rate,vol,rel){const s=ctx.createBufferSource();s.buff
  const end=t+Math.max(.08,dur*.95);g.gain.setValueAtTime(vol,t);g.gain.setValueAtTime(vol,Math.max(t,end-rel));g.gain.linearRampToValueAtTime(0,end);
  s.connect(g);g.connect(master);s.start(t);s.stop(end+.02)}
 function piper(t,dur,deg,acc,vow){const v=BUF.piper[vow]?vow:"a";playBuf(BUF.piper[v],t,dur,hz(deg)/2/F0[v],acc?1:.8,.04)}
+let DS_BPM=96;function dsPhrase(t0,s16){if(!BUF.ds)return;const s=ctx.createBufferSource();s.buffer=BUF.ds;s.playbackRate.value=(60/s16/4)/DS_BPM;const g=ctx.createGain();g.gain.value=1.2;s.connect(g);g.connect(master);s.start(t0-2*s16)}
 function sfv(n){return (t,dur,deg,acc)=>playBuf(BUF.sf[n][deg2midi(deg)],t,dur,1,acc?1.1:.85,.08)}
 function cur(t,dur,deg,acc,vow){voice(t,dur,deg,acc,vow||"a")}
 const VOICES=[
+ ["★","AI 歌聲合成 DiffSinger（中文女聲）","用真人歌手資料訓練的 AI 唱整句原創歌詞「晚風吹過城市的光，我想著你」；速度以 96 為準",null,"新",1,"ds"],
  ["1","目前的聲音（母音合成）","現在網站用的，當作對照",cur],
  ["2","開源 TTS 人聲（Piper）","真人錄音訓練的語音合成，唱 la / lay / lee / low / loo",piper,"取樣",1],
  ["3a","真人合唱「啊～」（FluidR3 Choir Aahs）","真人錄的合唱取樣，按音高播放",sfv("choir_aahs"),"取樣",1],
@@ -109,8 +112,8 @@ let stopAt=0,playingEl=null;
 async function play(i,el){initAudio();if(ctx.state==="suspended")ctx.resume();if(VOICES[i][5]){try{await loadSamples()}catch(e){return}}
  const bpm=+document.getElementById("bpm").value,s16=60/bpm/4,t0=ctx.currentTime+.15+2*s16;const fn=VOICES[i][3];
  if(document.getElementById("rev").checked){bus();const m0=master,vb=ctx.createGain();vb.connect(m0);vb.connect(revIn);master=vb;
-  try{PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v))}finally{master=m0}}
- else PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v));
+  try{if(VOICES[i][6])dsPhrase(t0,s16);else PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v))}finally{master=m0}}
+ else if(VOICES[i][6])dsPhrase(t0,s16);else PAT.forEach(([st,len,deg,acc,v])=>fn(t0+st*s16,len*s16,deg,acc,v));
  const useRev=document.getElementById("rev").checked;if(useRev)bus();const saveRev=revIn;if(!useRev)revIn=null;
  const dm=document.getElementById("drums").value;
  if(dm==="classic")for(let k=0;k<32;k++){const t=t0+k*s16;if(k%8==0)kick(t);if(k%8==4)snare(t);if(k%2==0)hat(t,k%4==0)}
@@ -124,5 +127,5 @@ const L=document.getElementById("list");VOICES.forEach((v,i)=>{const d=document.
  d.querySelector("button").onclick=()=>play(i,d);L.appendChild(d)});
 document.getElementById("bpm").oninput=e=>document.getElementById("bv").textContent=e.target.value;
 </script>
-<p class="s" style="margin-top:18px">來源與授權：2 = <a href="https://github.com/rhasspy/piper">Piper</a> 語音 en_US-ljspeech（LJ Speech 資料集，公眾領域；模型說明見 <a href="voices/PIPER_MODEL_CARD.txt">model card</a>）。3a/3b = FluidR3_GM 音色庫（Frank Wen 製作），經 <a href="https://github.com/gleitz/midi-js-soundfonts">gleitz/midi-js-soundfonts</a> 轉檔，授權見 <a href="voices/SOUNDFONT_README.txt">說明</a>。<a href="./">← 回練習頁</a></p>
+<p class="s" style="margin-top:18px">來源與授權：★ = <a href="https://github.com/MoonInTheRiver/DiffSinger">DiffSinger</a>（MIT 程式）用 Opencpop 資料集訓練的模型（資料集僅限非商業使用），歌詞原創。2 = <a href="https://github.com/rhasspy/piper">Piper</a> 語音 en_US-ljspeech（LJ Speech 資料集，公眾領域；模型說明見 <a href="voices/PIPER_MODEL_CARD.txt">model card</a>）。3a/3b = FluidR3_GM 音色庫（Frank Wen 製作），經 <a href="https://github.com/gleitz/midi-js-soundfonts">gleitz/midi-js-soundfonts</a> 轉檔，授權見 <a href="voices/SOUNDFONT_README.txt">說明</a>。<a href="./">← 回練習頁</a></p>
 </body></html>

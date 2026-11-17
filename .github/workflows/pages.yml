@@ -29,7 +29,7 @@ jobs:
         run: |
           VERSION="$(TZ=Asia/Taipei date +%Y.%m.%d).${{ github.run_number }}"
           mkdir _site
-          cp -r index.html audition.html pages _site/
+          cp -r index.html audition.html pages _site/ && { [ -d assets ] && cp -r assets _site/ || true; }
           BADGE="<div id=\"site-version\" style=\"position:fixed;right:6px;bottom:4px;font:11px sans-serif;color:#888;background:rgba(255,255,255,.8);padding:1px 6px;border-radius:4px;z-index:9999;pointer-events:none\">版本 ${VERSION}</div>"
           sed -i "s|</body>|${BADGE}</body>|" _site/index.html _site/audition.html
           grep -q "版本 ${VERSION}" _site/index.html
