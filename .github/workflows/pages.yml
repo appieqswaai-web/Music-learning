@@ -28,7 +28,7 @@ jobs:
           mkdir _site
           cp -r index.html pages _site/
           BADGE="<div id=\"site-version\" style=\"position:fixed;right:6px;bottom:4px;font:11px sans-serif;color:#888;background:rgba(255,255,255,.8);padding:1px 6px;border-radius:4px;z-index:9999;pointer-events:none\">版本 ${VERSION}</div>"
-          sed -i "s#</body>#${BADGE}</body>#" _site/index.html
+          sed -i "s|</body>|${BADGE}</body>|" _site/index.html
           grep -q "版本 ${VERSION}" _site/index.html
           echo "Version: ${VERSION}"
       - uses: actions/configure-pages@v5
