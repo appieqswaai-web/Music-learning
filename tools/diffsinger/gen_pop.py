@@ -13,8 +13,8 @@ dic = {}
 cands = glob.glob("inference/svs/opencpop/*pinyin2ph*.txt") + glob.glob("**/*pinyin2ph*.txt", recursive=True)
 if not cands: raise SystemExit("pinyin2ph dictionary not found")
 for line in open(cands[0], encoding="utf-8"):
-    parts = line.strip().split("|") if "|" in line else line.split()
-    if len(parts) >= 2: dic[parts[0].strip()] = parts[1].strip().split()
+    parts = [x.strip() for x in line.split("|") if x.strip()]  # format: "| ban | b an |"
+    if len(parts) >= 2: dic[parts[0]] = parts[1].split()
 print("dictionary", cands[0], len(dic))
 
 def phones(ch):
