@@ -1,8 +1,11 @@
 name: Voice probe (DiffSinger)
 on:
   push:
-    branches: [claude/project-thread-pccwgv]
+    branches: [claude/project-thread-pccwgv, claude/project-thread-7q9f72]
     paths: [".github/workflows/voice-probe.yml", "tools/diffsinger/**", "tools/generator/jpop.py"]
+# REGEN: which audio sets to (re)generate. jpop/audition audio is already committed; pop added 2026-11-18.
+env:
+  REGEN: pop
 permissions:
   contents: write
 jobs:
@@ -46,9 +49,13 @@ jobs:
             echo "installing $m"; pip install -q "$m"
           done
           test -f ../diffsinger.wav
-          PYTHONPATH=. python ../tools/diffsinger/gen_jpop.py ../tools/generator ../jp_out
-          cd .. && (which ffmpeg || { sudo apt-get update -qq; sudo apt-get install -y -qq ffmpeg; } >/dev/null) && mkdir -p assets && ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3
-          mkdir -p assets/jpop && for w in jp_out/*.wav; do ffmpeg -loglevel error -y -i "$w" -ac 1 -b:a 96k "assets/jpop/$(basename "$w" .wav).mp3"; done && cp jp_out/index.json assets/jpop/ && ls -la assets assets/jpop
+          case " $REGEN " in *" jpop "*) PYTHONPATH=. python ../tools/diffsinger/gen_jpop.py ../tools/generator ../jp_out;; esac
+          case " $REGEN " in *" pop "*) PYTHONPATH=. python ../tools/diffsinger/gen_pop.py ../tools/diffsinger/pop_patterns.json ../pop_out;; esac
+          cd .. && (which ffmpeg || { sudo apt-get update -qq; sudo apt-get install -y -qq ffmpeg; } >/dev/null) && mkdir -p assets
+          case " $REGEN " in *" jpop "*) ffmpeg -loglevel error -y -i diffsinger.wav -ac 1 -b:a 96k assets/diffsinger_zh.mp3
+            mkdir -p assets/jpop && for w in jp_out/*.wav; do ffmpeg -loglevel error -y -i "$w" -ac 1 -b:a 96k "assets/jpop/$(basename "$w" .wav).mp3"; done && cp jp_out/index.json assets/jpop/;; esac
+          if [ -d pop_out ]; then mkdir -p assets/pop && for w in pop_out/*.wav; do ffmpeg -loglevel error -y -i "$w" -ac 1 -b:a 80k "assets/pop/$(basename "$w" .wav).mp3"; done && cp pop_out/index.json assets/pop/; fi
+          ls -la assets assets/*/
       - name: Commit audio
         run: |
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
