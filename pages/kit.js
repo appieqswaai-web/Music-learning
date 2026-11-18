@@ -3,10 +3,21 @@
 try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}
 /* 播一段無聲的 <audio>，讓 iPhone 把網頁當成「媒體播放」，靜音鍵開著也能從喇叭出聲 */
 const SILENT=new Audio("data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==");SILENT.loop=true;SILENT.setAttribute("playsinline","");SILENT.volume=0.01;
-(function(){function wake(){try{if(SILENT.paused)SILENT.play().catch(()=>{});}catch(e){}try{if(typeof initAudio==="function")initAudio();if(typeof ctx==="undefined"||!ctx)return;if(ctx.state!=="running")ctx.resume();
- const s=ctx.createBufferSource();s.buffer=ctx.createBuffer(1,1,22050);s.connect(ctx.destination);s.start(0)}catch(e){}}
- ["touchend","click"].forEach(ev=>document.addEventListener(ev,wake,true));
- document.addEventListener("visibilitychange",()=>{if(!document.hidden&&typeof ctx!=="undefined"&&ctx&&ctx.state!=="running")ctx.resume()})})();
+/* 省電：無聲音檔只在播放時循環；停止、播完或切到背景就暫停，停止 30 秒後關閉音訊引擎 */
+(function(){let idle=null;
+ function playingNow(){try{return (typeof cur!=="undefined"&&cur>=0)||(typeof running!=="undefined"&&running)||(typeof playing!=="undefined"&&playing)}catch(e){return false}}
+ function onPlay(){clearTimeout(idle);idle=null;try{if(SILENT.paused)SILENT.play().catch(()=>{})}catch(e){}try{if(typeof ctx!=="undefined"&&ctx&&ctx.state!=="running")ctx.resume()}catch(e){}}
+ function sleep(){clearTimeout(idle);idle=null;try{if(typeof ctx!=="undefined"&&ctx&&ctx.state==="running")ctx.suspend()}catch(e){}}
+ function onStop(){if(playingNow())return;try{SILENT.pause()}catch(e){}clearTimeout(idle);idle=setTimeout(()=>{if(!playingNow())sleep()},30000)}
+ function wrap(name,after){const f=window[name];if(typeof f!=="function")return;window[name]=function(){const r=f.apply(this,arguments);try{after()}catch(e){}return r}}
+ wrap("toggle",()=>playingNow()?onPlay():onStop());wrap("start",()=>playingNow()&&onPlay());wrap("stop",onStop);
+ /* 第一次點擊時解鎖 iPhone 音訊（只解鎖一次，不讓引擎一直開著） */
+ let unlocked=false;function unlock(){if(unlocked)return;try{if(typeof initAudio==="function")initAudio();if(typeof ctx==="undefined"||!ctx)return;
+  const s=ctx.createBufferSource();s.buffer=ctx.createBuffer(1,1,22050);s.connect(ctx.destination);s.start(0);unlocked=true;if(!playingNow())onStop()}catch(e){}}
+ ["touchend","click"].forEach(ev=>document.addEventListener(ev,unlock,true));
+ /* 切到背景或關分頁：停止播放、關打拍子面板、暫停無聲音檔與音訊引擎 */
+ function away(){try{if(window.TAP&&TAP.close)TAP.close()}catch(e){}try{if(playingNow()&&typeof stop==="function")stop()}catch(e){}try{SILENT.pause()}catch(e){}sleep()}
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)away()});window.addEventListener("pagehide",away)})();
 (function(){
 const ORIG={kick:window.kick,snare:window.snare,hat:window.hat,clap:window.clap,ohat:window.ohat};
 function nz(t,dur,type,freq,vol,q){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;if(q)f.Q.value=q;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+dur+.02)}
