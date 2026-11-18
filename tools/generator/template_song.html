@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>《浪子回頭》人聲節奏練習</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#222;--mute:#777;--acc:#5f3dc4;--acc2:#1971c2;--line:#e2e0da}
+@media (prefers-color-scheme:dark){:root{--bg:#18181b;--card:#232327;--ink:#eee;--mute:#999;--line:#38383d}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{padding:20px 16px 8px;max-width:920px;margin:auto}h1{font-size:1.4rem;margin:0 0 4px}header p{margin:4px 0;color:var(--mute);font-size:.92rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 16px}
+.bar .in{max-width:920px;margin:auto;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.92rem}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--card);color:var(--ink);padding:6px 10px;cursor:pointer;font:inherit}.seg button.on{background:var(--acc2);color:#fff}
+input[type=range]{width:120px;vertical-align:middle}label{cursor:pointer}
+main{max-width:920px;margin:auto;padding:8px 16px 40px}
+.grp{margin:26px 0 4px;padding-left:10px;border-left:5px solid var(--acc)}.grp h2{margin:0;font-size:1.2rem}.grp p{margin:2px 0;color:var(--mute);font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+.card.playing{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 30%,transparent)}
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.num{font-weight:700;color:var(--acc);min-width:2.2em}
+.title{font-weight:700;font-size:1.05rem}
+.tag{font-size:.78rem;color:var(--mute);border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.btn.play{background:var(--acc);border-color:var(--acc);color:#fff;min-width:84px}.spacer{flex:1}
+.lines{margin:8px 0 0;padding:0;list-style:none;font-size:.95rem}.lines li{padding:1px 6px;border-radius:6px;color:var(--mute)}.lines li.now{background:var(--acc);color:#fff}
+.chs{font-size:.86rem;color:var(--acc);font-weight:700;min-height:1.2em;margin-top:4px}
+.rows{margin-top:8px}.row{display:flex;align-items:stretch;gap:6px;margin:3px 0}.row .bn{width:3.2em;flex:none;font-size:.68rem;color:var(--mute);text-align:right;padding-top:6px}
+.grid{display:grid;gap:2px;flex:none}
+.cell{height:30px;border-radius:3px;background:color-mix(in srgb,var(--ink) 6%,transparent);font-size:.78rem;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.cell.beat{box-shadow:inset 2px 0 0 color-mix(in srgb,var(--ink) 35%,transparent)}.cell.barstart{box-shadow:inset 3px 0 0 var(--acc2)}
+.cell.on{background:var(--acc);color:#fff;font-weight:700}.cell.hold{background:color-mix(in srgb,var(--acc) 38%,transparent)}
+.cell.now{outline:2px solid var(--acc2);outline-offset:-2px}
+.pkrow .grid{opacity:.85}
+.lbl{display:grid;gap:2px;font-size:.6rem;color:var(--mute);text-align:center;flex:none}
+.nogrid .rows,.nogrid .info{display:none}
+.info{margin-top:8px}.info summary{cursor:pointer;color:var(--acc2);font-size:.9rem}
+.count{font-family:ui-monospace,Menlo,monospace;background:color-mix(in srgb,var(--ink) 6%,transparent);padding:6px 8px;border-radius:6px;font-size:.8rem;overflow-x:auto;white-space:pre-wrap}.count b{color:var(--acc)}
+.info p{margin:8px 0}.k{color:var(--acc2);font-weight:700}
+#quizbox{display:none;background:var(--card);border:2px solid var(--acc2);border-radius:12px;padding:14px 16px;margin:14px 0}.quizmode #quizbox{display:block}
+#quizbox .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}#quizbox .right{background:#2f9e44;color:#fff;border-color:#2f9e44}#quizbox .wrong{background:#e03131;color:#fff;border-color:#e03131}
+footer{max-width:920px;margin:auto;padding:0 16px 40px;color:var(--mute);font-size:.86rem}
+</style></head><body>
+<header><h1>《浪子回頭》人聲節奏練習</h1>
+<p>茄子蛋〈浪子回頭〉（黃奇斌 詞曲），照樂譜整理的人聲節奏：4/4 拍、Slow Soul、♩≈62。人聲是母音合成的機器聲，音高是通用的練習音高，不是原曲旋律；每句只顯示開頭兩個字當提示（● 是其他字），請搭配原曲一起練。</p></header>
+<div class="bar"><div class="in">
+ <span class="seg" id="mix"><button data-m="both" class="on">人聲＋鼓</button><button data-m="voc">只人聲</button><button data-m="drum">只鼓</button></span>
+ <span>速度倍率 <input type="range" id="spd" min="20" max="120" value="100" step="5"> <b id="spdv">100%</b></span>
+ <label><input type="checkbox" id="click"> 節拍器</label>
+ <label><input type="checkbox" id="countin" checked> 先數 1 小節</label>
+ <label><input type="checkbox" id="loop" checked> 循環</label>
+ <label><input type="checkbox" id="showgrid" checked> 顯示格子</label>
+ <button class="btn" id="quizbtn">🎲 節奏型考我</button>
+</div></div>
+<main id="main"><div id="quizbox"></div></main>
+<footer><p>格子圖例：一列＝一小節，深色＝唱字的起點（格內是字），淺色＝拉長，藍色粗線＝小節開頭，灰線＝每一拍。最上面標「起拍」的那列是從上一小節尾巴（第 4 拍後半）進來的字。</p><p>練習建議：先用 50%～70% 速度只聽，再開「🥁 打拍子」跟著點，最後用 100% 跟原曲唱。</p></footer>
+<script>
+const GROUPS=__GROUPS__;
+const P=__PATTERNS__;
+P.forEach(p=>{p.notes=[];p.noteAt={};for(let i=0;i<p.s.length;i++)if(p.s[i]==="x"){let j=i+1;while(j<p.s.length&&p.s[j]==="-")j++;p.noteAt[i]=p.notes.length;p.notes.push({st:i,len:j-i})}
+ p.steps=p.s.length;p.barSet=new Set(p.bars.map(b=>b[0]));const A=[0,2,4,2,4,5,4,2,0,2,4,7,5,4,2];p.mel=p.notes.map((n,k)=>A[k%A.length]);
+ if(p.ly.length!==p.notes.length)console.error("資料不符",p.t)});
+const $=id=>document.getElementById(id),main=$("main");
+function rowHTML(p,a,n,label,maxn,pk){const col=`grid-template-columns:repeat(${n},1fr);width:${n/maxn*100}%`,off=pk?p.sub*4-n:0;let v="",l="",i=a;
+ while(i<a+n){const c=p.s[i],r=i-a+off;let j=i+1;if(c==="x"){while(j<a+n&&p.s[j]==="-")j++}else{while(j<a+n&&p.s[j]===c&&(j-a+off)%p.sub!==0)j++}
+  const cl=["cell"];if(!pk&&i===a)cl.push("barstart");else if(r%p.sub===0)cl.push("beat");if(c==="x")cl.push("on");else if(c==="-")cl.push("hold");
+  v+=`<div class="${cl.join(" ")}" data-a="${i}" data-b="${j}" style="grid-column:span ${j-i}">${c==="x"?p.ly[p.noteAt[i]]:""}</div>`;i=j}
+ if(pk)l=`<div style="grid-column:span ${n}"></div>`;else for(let r=0;r<n;r+=p.sub)l+=`<div style="grid-column:span ${Math.min(p.sub,n-r)}"><b>${r/p.sub+1}</b></div>`;
+ const ml=pk?"margin-left:auto;":"";
+ return `<div class="row${pk?" pkrow":""}"><span class="bn">${label}</span><div style="flex:1;min-width:0"><div class="grid" style="${ml}${col}">${v}</div><div class="lbl" style="${ml}${col}">${l}</div></div></div>`}
+function gridHTML(p){const maxn=Math.max(p.sub*4,...p.bars.map(b=>b[1]));let h="";
+ if(p.pk)h+=rowHTML(p,0,p.pk,"起拍",maxn,true);
+ p.bars.forEach((b,k)=>{const beats=b[1]/p.sub;h+=rowHTML(p,b[0],b[1],`${k+1}${beats!==4?"<br>"+beats+"/4":""}`,maxn,false)});return `<div class="rows${p.sub===12?" sub12":""}">${h}</div>`}
+let lastG=null;
+P.forEach((p,i)=>{if(p.g!==lastG){lastG=p.g;const g=GROUPS[p.g],h=document.createElement("div");h.className="grp";h.innerHTML=`<h2>${g.name}</h2><p>${g.desc}</p>`;main.appendChild(h)}
+ const c=document.createElement("div");c.className="card";c.id="c"+i;
+ const lines=p.names.length>1?`<ol class="lines">${p.names.map((n,k)=>`<li data-k="${k}">${k+1}. ${n}</li>`).join("")}</ol>`:"";
+ c.innerHTML=`<div class="top"><span class="num">#${i+1}</span><span class="title">${p.t}</span><span class="tag">${p.bpm} BPM</span><span class="spacer"></span><button class="btn play">▶ 播放</button>${p.chain?'<button class="btn chain">🔗 接龍</button>':""}</div>
+ ${lines}<div class="chs"></div>${gridHTML(p)}
+ <details class="info"><summary>數拍唸法與說明</summary><p class="k">數拍唸法（粗體＝唱字，~＝拉長，·＝休止${p.sub===12?"，三 連＝三連音的第 2、3 個字":""}）</p><div class="count">${p.count}</div>${p.ex?`<p><span class="k">重點：</span>${p.ex}</p>`:""}${p.how?`<p><span class="k">怎麼練：</span>${p.how}</p>`:""}</details>`;
+ c.querySelector(".play").onclick=()=>toggle(i);const cb=c.querySelector(".chain");if(cb)cb.onclick=()=>toggle(i,null,true);main.appendChild(c)});
+$("showgrid").onchange=e=>document.body.classList.toggle("nogrid",!e.target.checked);
+let mix="both";document.querySelectorAll("#mix button").forEach(b=>b.onclick=()=>{mix=b.dataset.m;document.querySelectorAll("#mix button").forEach(x=>x.classList.toggle("on",x===b))});
+$("spd").oninput=()=>$("spdv").textContent=$("spd").value+"%";
+__AUDIO__
+let cur=-1,timer=null,nextT=0,raf=null,visQ=[],onEnd=null;
+let ph="main",ps=0,step=0,E=0,stage=0,rep=0,chainOn=false;
+function bpmOf(p){return p.bpm*$("spd").value/100}
+function toggle(i,cb,chain){initAudio();ctx.resume();if(cur===i&&!!chain===chainOn){stop();return}stop();cur=i;onEnd=cb||null;chainOn=!!chain;const p=P[i];
+ stage=chainOn?0:p.bounds.length-1;E=p.bounds[stage];rep=0;
+ $("c"+i).classList.add("playing");setBtn(i);showStage();
+ if($("countin").checked){ph="count";ps=0}else{ph="main";step=0}
+ nextT=ctx.currentTime+.08;timer=setInterval(sched,25);sched();raf=requestAnimationFrame(draw)}
+function setBtn(i){const c=$("c"+i);if(!c)return;const on=cur===i;c.querySelector(".play").textContent=on&&!chainOn?"■ 停止":"▶ 播放";const b=c.querySelector(".chain");if(b)b.textContent=on&&chainOn?"■ 停止接龍":"🔗 接龍"}
+function showStage(){const p=P[cur],c=$("c"+cur);if(!c)return;const s=c.querySelector(".chs");
+ s.textContent=chainOn?`🔗 接龍：${stage?"第 1～"+(stage+1)+" 句":"第 1 句"}（第 ${rep+1}/2 次${stage===p.bounds.length-1?"，整段":""}）`:"";
+ c.querySelectorAll(".lines li").forEach(li=>li.style.opacity=chainOn&&+li.dataset.k>stage?.35:1)}
+function stop(){if(cur<0)return;clearInterval(timer);cancelAnimationFrame(raf);const c=$("c"+cur);c.classList.remove("playing");const i=cur;cur=-1;setBtn(i);chainOn=false;
+ c.querySelector(".chs").textContent="";c.querySelectorAll(".lines li").forEach(li=>{li.style.opacity=1;li.classList.remove("now")});
+ document.querySelectorAll(".cell.now").forEach(x=>x.classList.remove("now"));visQ=[];const cb=onEnd;onEnd=null;if(cb)cb()}
+function sing(p,gs,t,sd){const j=p.noteAt[gs];if(j===undefined)return;if(mix!=="drum")voice(t,p.notes[j].len*sd,p.mel[j],(gs-p.pk)%p.sub===0,p.vw[j],true);if(window.TAP)TAP.expect(t,j,gs)}
+function drums(p,gs,t){if(mix==="voc")return;if(p.K[gs]==="x")kick(t);if(p.S[gs]==="x")snare(t);if(p.H[gs]==="x")hat(t,(gs-p.pk)%p.sub===0)}
+function more(p){return $("loop").checked||(chainOn&&(stage<p.bounds.length-1||rep<1))}
+function sched(){const p=P[cur];while(nextT<ctx.currentTime+.12){const beat=60/bpmOf(p),sd=beat/p.sub,n4=p.sub*4;let vis=-1;
+ if(ph==="count"||ph==="breath"){
+  if(ps%p.sub===0)(ph==="count"||$("click").checked)&&clickS(nextT,ps===0);
+  if(ph==="breath"&&mix!=="voc"&&ps%(p.sub/2)===0)hat(nextT,ps%p.sub===0);
+  if(ps>=n4-p.pk){const gs=ps-(n4-p.pk);sing(p,gs,nextT,sd);vis=gs}
+  ps++;if(ps>=n4){ph="main";step=p.pk}
+ }else{
+  if(step>=E){const atBreath=p.breath[stage],last=p.bounds.length-1;rep++;let cont;
+   if(chainOn){if(rep>=2&&stage<last){stage++;rep=0;cont=true}else if(rep>=2){cont=$("loop").checked;rep=0}else cont=true}else cont=$("loop").checked;
+   if(!cont){const t=nextT;setTimeout(()=>{if(cur>=0&&P[cur]===p)stop()},(t-ctx.currentTime)*1000+200);nextT=1e9;return}
+   E=p.bounds[stage];const tt=nextT;setTimeout(()=>{if(cur>=0&&P[cur]===p)showStage()},Math.max(0,(tt-ctx.currentTime)*1000));
+   if(atBreath&&p.pk){ph="breath";ps=0;continue}step=p.pk}
+  const s=step;drums(p,s,nextT);
+  const ov=p.pk&&!p.breath[stage]&&s>=E-p.pk&&more(p);
+  if(ov){sing(p,s-(E-p.pk),nextT,sd)}else{const j=p.noteAt[s];if(j!==undefined&&p.li[j]<=stage)sing(p,s,nextT,sd)}
+  if($("click").checked&&(s-p.pk)%p.sub===0)clickS(nextT,p.barSet.has(s));
+  vis=ov?s-(E-p.pk):s;step++}
+ visQ.push({t:nextT,s:vis});nextT+=sd}}
+function draw(){if(cur<0)return;const now=ctx.currentTime;let s=null;while(visQ.length&&visQ[0].t<=now)s=visQ.shift().s;
+ if(s!==null){const p=P[cur],c=$("c"+cur);c.querySelectorAll(".cell.now").forEach(x=>x.classList.remove("now"));if(s>=0){c.querySelectorAll(".cell").forEach(e=>{if(s>=+e.dataset.a&&s<+e.dataset.b)e.classList.add("now")});
+  let li=-1;for(const n of p.notes)if(s>=n.st&&s<n.st+n.len){li=p.li[p.noteAt[n.st]];break}if(li>=0)c.querySelectorAll(".lines li").forEach(x=>x.classList.toggle("now",+x.dataset.k===li))}}
+ raf=requestAnimationFrame(draw)}
+/* 節奏型盲聽測驗（只考「節奏型」那一組） */
+const qb=$("quizbox"),QI=P.map((p,i)=>p.g==="type"?i:-1).filter(i=>i>=0);let qi=-1;
+$("quizbtn").onclick=()=>{document.body.classList.add("quizmode");newQ();qb.scrollIntoView({behavior:"smooth"})};
+function newQ(){stop();let n;do{n=QI[Math.floor(Math.random()*QI.length)]}while(n===qi&&QI.length>1);qi=n;const o=new Set([n]);while(o.size<Math.min(4,QI.length))o.add(QI[Math.floor(Math.random()*QI.length)]);const arr=[...o].sort(()=>Math.random()-.5);
+ qb.innerHTML=`<b>🎲 盲聽測驗</b>：這是哪一種節奏型？（先把「顯示格子」關掉再聽）<div style="margin-top:8px"><button class="btn play" id="qplay">▶ 播放題目</button> <button class="btn" id="qnext">換一題</button> <button class="btn" id="qclose">關閉</button></div><div class="opts">${arr.map(k=>`<button class="btn" data-k="${k}">${P[k].t}</button>`).join("")}</div><div id="qres" style="margin-top:8px"></div>`;
+ $("qplay").onclick=()=>{if(cur===qi){stop();$("qplay").textContent="▶ 播放題目";return}toggle(qi,()=>{$("qplay")&&($("qplay").textContent="▶ 播放題目")});$("qplay").textContent="■ 停止"};
+ $("qnext").onclick=newQ;$("qclose").onclick=()=>{stop();document.body.classList.remove("quizmode")};
+ qb.querySelectorAll(".opts .btn").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;qb.querySelectorAll(".opts .btn").forEach(x=>{if(+x.dataset.k===qi)x.classList.add("right")});if(k!==qi)b.classList.add("wrong");
+  $("qres").innerHTML=(k===qi?"✅ 答對了！":"❌ 再聽聽看。")+` 正解是 <b>#${qi+1} ${P[qi].t}</b>，<a href="#c${qi}">跳到該卡片</a>。`})}
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"){e.preventDefault();if(cur>=0)stop()}});
+</script>
+<script src="tap.js"></script><script src="kit.js"></script></body></html>
